@@ -1,0 +1,15 @@
+{
+  "CONTRACT_ADDRESS": "0xae11d8f81FacA865e79204574b9a101C05002d5b",
+  "SCAN_LINK": "https://ftmscan.com/address/0xae11d8f81faca865e79204574b9a101c05002d5b",
+  "NETWORK": {
+    "NAME": "Fantom",
+    "SYMBOL": "FTM",
+    "ID": 250
+  },
+  "NFT_NAME": "test",
+  "SYMBOL": "test",
+  "GAS_LIMIT": 300000,
+  "MARKETPLACE": "Paintswap",
+  "MARKETPLACE_LINK": "https://paintswap.finance/marketplace",
+  "SHOW_BACKGROUND": true
+}
