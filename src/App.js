@@ -160,7 +160,7 @@ function App() {
               </NFTGrid>
             ) : (
               <s.TextDescription style={{ textAlign: "center", fontSize: 20, color: "var(--accent-text)" }}>
-                No LootBoxes found in your wallet.
+                No $JOINT Packs found.
               </s.TextDescription>
             )}
             {rewardMessage && (
