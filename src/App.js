@@ -19,9 +19,12 @@ const NFTGrid = styled.div`
 
 const NFTImage = styled.img`
   width: 100px;
+  height: 100px; // Ensure height is set
   margin: 5px;
   border: ${({ selected }) => (selected ? "5px solid var(--accent)" : "none")};
   cursor: pointer;
+  display: block; // Ensure it's displayed
+  z-index: 10; // Ensure it's above other elements
 `;
 
 const StyledButton = styled.button`
@@ -131,6 +134,9 @@ function App() {
             ? `Connected: ${truncate(blockchain.account, 15)}`
             : "Connect Wallet"}
         </StyledButton>
+
+        {console.log("Account:", blockchain.account)}
+        {console.log("Contract:", blockchain.erc721Contract)}
 
         {blockchain.account && blockchain.erc721Contract ? (
           <>
