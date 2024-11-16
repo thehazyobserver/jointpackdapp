@@ -5,10 +5,10 @@ import * as s from "./styles/globalStyles";
 import styled from "styled-components";
 import defaultImage from "../public/config/images/$JOINT PACK.jpg"; // Import the default image
 
-// Utility Function
+// Utility Functions
 const truncate = (input, len) => (input.length > len ? `${input.substring(0, len)}...` : input);
 
-// Styled Components 
+// Styled Components
 const NFTGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
