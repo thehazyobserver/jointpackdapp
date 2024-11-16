@@ -62,6 +62,11 @@ function App() {
   }, []);
 
   const fetchNFTs = useCallback(async () => {
+    if (!blockchain.account || !blockchain.erc721Contract) {
+      console.log("Blockchain account or contract not available");
+      return;
+    }
+
     try {
       const balance = await blockchain.erc721Contract.methods.balanceOf(blockchain.account).call();
       const nftData = [];
