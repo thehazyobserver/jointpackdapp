@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
 import * as s from "./styles/globalStyles";
 import styled from "styled-components";
-import defaultImage from "../public/config/images/$JOINT PACK.jpg"; // Import the default image
+import defaultImage from "./assets/images/JOINTPACK.jpg"; // Update the import path
 
 // Utility Functions
 const truncate = (input, len) => (input.length > len ? `${input.substring(0, len)}...` : input);
