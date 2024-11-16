@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
 import * as s from "./styles/globalStyles";
 import styled from "styled-components";
+import defaultImage from "../public/config/images/$JOINT PACK.jpg"; // Import the default image
 
 // Utility Functions
 const truncate = (input, len) => (input.length > len ? `${input.substring(0, len)}...` : input);
@@ -64,7 +65,7 @@ function App() {
     if (blockchain.account && blockchain.erc721Contract) {
       fetchNFTs();
     }
-  }, [blockchain.account, blockchain.erc721Contract, fetchNFTs]);
+  }, [blockchain.account, blockchain.erc721Contract]);
 
   // Fetch config.json data
   const getConfig = async () => {
@@ -89,9 +90,7 @@ function App() {
       const nftData = [];
       for (let i = 0; i < balance; i++) {
         const tokenId = await blockchain.erc721Contract.methods.tokenOfOwnerByIndex(blockchain.account, i).call();
-        const tokenURI = await blockchain.erc721Contract.methods.tokenURI(tokenId).call();
-        const metadata = await fetch(tokenURI).then((res) => res.json());
-        nftData.push({ tokenId, metadata });
+        nftData.push({ tokenId, image: defaultImage }); // Use the default image
       }
       setNfts(nftData);
     } catch (error) {
@@ -142,16 +141,16 @@ function App() {
             </s.TextTitle>
             {nfts.length > 0 ? (
               <NFTGrid>
-                {nfts.map(({ tokenId, metadata }) => (
+                {nfts.map(({ tokenId, image }) => (
                   <div key={tokenId}>
                     <NFTImage
-                      src={metadata.image}
+                      src={image}
                       alt={`LootBox ${tokenId}`}
                       selected={selectedToken === tokenId}
                       onClick={() => setSelectedToken(tokenId)}
                     />
                     <s.TextDescription style={{ textAlign: "center" }}>
-                      {metadata.name || `Token ID: ${tokenId}`}
+                      {`Token ID: ${tokenId}`}
                     </s.TextDescription>
                     <StyledButton onClick={() => openLootBox(tokenId)}>
                       Open LootBox
