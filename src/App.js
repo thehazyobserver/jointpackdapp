@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
-import { fetchData } from "./redux/data/dataActions";
 import * as s from "./styles/globalStyles";
 import styled from "styled-components";
 
@@ -65,7 +64,7 @@ function App() {
     if (blockchain.account && blockchain.erc721Contract) {
       fetchNFTs();
     }
-  }, [blockchain.account, blockchain.erc721Contract]);
+  }, [blockchain.account, blockchain.erc721Contract, fetchNFTs]);
 
   // Fetch config.json data
   const getConfig = async () => {

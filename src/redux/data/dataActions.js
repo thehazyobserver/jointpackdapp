@@ -1,5 +1,3 @@
-import store from "../store";
-
 // Action creators for fetch requests
 const fetchDataRequest = () => {
   return {
