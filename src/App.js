@@ -92,6 +92,7 @@ function App() {
         const tokenId = await blockchain.erc721Contract.methods.tokenOfOwnerByIndex(blockchain.account, i).call();
         nftData.push({ tokenId, image: defaultImage }); // Use the default image
       }
+      console.log("Fetched NFTs:", nftData); // Log fetched NFTs
       setNfts(nftData);
     } catch (error) {
       console.error("Error fetching NFTs:", error);
