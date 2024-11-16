@@ -189,7 +189,7 @@ function App() {
               color: "var(--accent-text)",
             }}
           >
-            Please connect your wallet to view your LootBoxes.
+            Pleases connect your wallet to view your LootBoxes.
           </s.TextDescription>
         )}
       </s.Container>
