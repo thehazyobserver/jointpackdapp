@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
 import * as s from "./styles/globalStyles";
@@ -61,11 +61,26 @@ function App() {
     getConfig();
   }, []);
 
+  const fetchNFTs = useCallback(async () => {
+    try {
+      const balance = await blockchain.erc721Contract.methods.balanceOf(blockchain.account).call();
+      const nftData = [];
+      for (let i = 0; i < balance; i++) {
+        const tokenId = await blockchain.erc721Contract.methods.tokenOfOwnerByIndex(blockchain.account, i).call();
+        nftData.push({ tokenId: tokenId.toString(), image: defaultImage }); // Convert BigInt to string and use the default image
+      }
+      console.log("Fetched NFTs:", nftData); // Log fetched NFTs
+      setNfts(nftData);
+    } catch (error) {
+      console.error("Error fetching NFTs:", error);
+    }
+  }, [blockchain.account, blockchain.erc721Contract]);
+
   useEffect(() => {
     if (blockchain.account && blockchain.erc721Contract) {
       fetchNFTs();
     }
-  }, [blockchain.account, blockchain.erc721Contract]);
+  }, [blockchain.account, blockchain.erc721Contract, fetchNFTs]);
 
   // Fetch config.json data
   const getConfig = async () => {
@@ -80,22 +95,6 @@ function App() {
       SET_CONFIG(config);
     } catch (error) {
       console.error("Error fetching config:", error);
-    }
-  };
-
-  // Fetch NFTs
-  const fetchNFTs = async () => {
-    try {
-      const balance = await blockchain.erc721Contract.methods.balanceOf(blockchain.account).call();
-      const nftData = [];
-      for (let i = 0; i < balance; i++) {
-        const tokenId = await blockchain.erc721Contract.methods.tokenOfOwnerByIndex(blockchain.account, i).call();
-        nftData.push({ tokenId: tokenId.toString(), image: defaultImage }); // Convert BigInt to string and use the default image
-      }
-      console.log("Fetched NFTs:", nftData); // Log fetched NFTs
-      setNfts(nftData);
-    } catch (error) {
-      console.error("Error fetching NFTs:", error);
     }
   };
 
