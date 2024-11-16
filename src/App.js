@@ -90,7 +90,7 @@ function App() {
       const nftData = [];
       for (let i = 0; i < balance; i++) {
         const tokenId = await blockchain.erc721Contract.methods.tokenOfOwnerByIndex(blockchain.account, i).call();
-        nftData.push({ tokenId, image: defaultImage }); // Use the default image
+        nftData.push({ tokenId: tokenId.toString(), image: defaultImage }); // Convert BigInt to string and use the default image
       }
       console.log("Fetched NFTs:", nftData); // Log fetched NFTs
       setNfts(nftData);
