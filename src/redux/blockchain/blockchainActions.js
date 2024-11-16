@@ -53,7 +53,7 @@ export const connect = (CONFIG) => {
             payload: {
               account: accounts[0],
               web3,
-              nftContract,
+              erc721Contract: nftContract,
               networkId,
             },
           });
@@ -90,9 +90,9 @@ export const openLootBox = (tokenId) => {
     dispatch({ type: OPEN_LOOTBOX_REQUEST });
 
     const state = getState();
-    const { account, web3, nftContract } = state.blockchain;
+    const { account, web3, erc721Contract } = state.blockchain;
 
-    if (!account || !web3 || !nftContract) {
+    if (!account || !web3 || !erc721Contract) {
       dispatch({
         type: OPEN_LOOTBOX_FAILED,
         payload: "Please connect your wallet first.",
@@ -102,7 +102,7 @@ export const openLootBox = (tokenId) => {
 
     try {
       // Send the transaction to open the loot box
-      await nftContract.methods.openLootBox(tokenId).send({ from: account });
+      await erc721Contract.methods.openLootBox(tokenId).send({ from: account });
 
       console.log(`LootBox #${tokenId} opened successfully.`);
       dispatch({
