@@ -143,7 +143,7 @@ function App() {
     }
   }, [dispatch, CONFIG.CONTRACT_ADDRESS]);
 
-  // Open LootBox
+  // OPEN $JOINT PACK
   const openLootBox = async (tokenId) => {
     try {
       await blockchain.LootBoxNFT.methods
@@ -155,7 +155,7 @@ function App() {
       dispatch(fetchData());
     } catch (error) {
       console.error("Error opening lootbox:", error);
-      alert("Failed to open LootBox. Check console for details.");
+      alert("Failed to OPEN $JOINT PACK. Check console for details.");
     }
   };
 
@@ -195,7 +195,7 @@ function App() {
                 color: "var(--accent-text)",
               }}
             >
-              Your LootBoxes
+              Your $JOINT Packs
             </s.TextTitle>
             {data.nfts && data.nfts.length > 0 ? (
               <NFTGrid>
@@ -211,7 +211,7 @@ function App() {
                       {`Token ID: ${tokenId}`}
                     </s.TextDescription>
                     <StyledButton onClick={() => openLootBox(tokenId)}>
-                      Open LootBox
+                      OPEN $JOINT PACK
                     </StyledButton>
                   </NFTBox>
                 ))}
@@ -248,7 +248,7 @@ function App() {
               color: "var(--accent-text)",
             }}
           >
-            Please connect your wallet to view your LootBoxes.
+            Please connect your wallet to view your $JOINT Packs.
           </s.TextDescription>
         )}
       </s.Container>
