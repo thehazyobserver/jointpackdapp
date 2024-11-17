@@ -24,9 +24,12 @@ const NFTImage = styled.img`
   width: 100px;
   height: 100px;
   margin: 5px;
-  border: ${({ selected }) => (selected ? "5px solid var(--accent)" : "none")};
+  border: 5px solid white; /* Add a white border */
+  background-color: #333; /* Add a background fill */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  display: block;
   z-index: 10;
 `;
 
@@ -34,14 +37,15 @@ const StyledButton = styled.button`
   padding: 10px;
   border-radius: 50px;
   border: none;
-  background-color: var(--secondary);
+  background-color: black; /* Make the button black */
   font-weight: bold;
-  color: var(--secondary-text);
+  color: white; /* Font color white */
   width: 150px;
   cursor: pointer;
+  text-align: center;
 
   :hover {
-    background-color: var(--accent);
+    background-color: #444; /* Darker shade on hover */
   }
 `;
 
