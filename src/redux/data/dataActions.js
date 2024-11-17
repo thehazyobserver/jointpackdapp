@@ -2,7 +2,7 @@
 import { LootBoxNFT } from './contracts'; // Ensure the contract is imported correctly
 import defaultImage from '../../assets/images/JOINTPACK.jpg'; // Ensure the default image is correctly imported
 
-export const initializeContract = () => {
+export const initializeContract = (contractAddress) => {
   return async (dispatch, getState) => {
     try {
       const { web3, account } = getState().blockchain;
@@ -10,7 +10,11 @@ export const initializeContract = () => {
         throw new Error("Web3 or account not found");
       }
 
-      const lootBoxNFT = new web3.eth.Contract(LootBoxNFT.abi, LootBoxNFT.address);
+      if (!contractAddress) {
+        throw new Error("Contract address not specified");
+      }
+
+      const lootBoxNFT = new web3.eth.Contract(LootBoxNFT.abi, contractAddress);
       dispatch({ type: 'SET_LOOTBOXNFT_CONTRACT', payload: lootBoxNFT });
     } catch (error) {
       console.error("Error initializing LootBoxNFT contract:", error);

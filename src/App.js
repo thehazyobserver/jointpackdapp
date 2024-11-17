@@ -77,12 +77,10 @@ function App() {
       const config = await configResponse.json();
       SET_CONFIG(config);
       setConfigLoaded(true);
-      // Initialize contract with the fetched address
-      dispatch(initializeContract(config.CONTRACT_ADDRESS));
     } catch (error) {
       console.error("Error fetching config:", error);
     }
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     getConfig();
@@ -99,7 +97,7 @@ function App() {
 
   // Initialize contract when account and web3 are available
   useEffect(() => {
-    if (blockchain.account && blockchain.web3) {
+    if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS) {
       dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
     }
   }, [blockchain.account, blockchain.web3, dispatch, CONFIG.CONTRACT_ADDRESS]);
