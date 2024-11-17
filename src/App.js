@@ -210,6 +210,9 @@ function App() {
                     <s.TextDescription style={{ textAlign: "center" }}>
                       {`Token ID: ${tokenId}`}
                     </s.TextDescription>
+                    <StyledButton onClick={() => openLootBox(tokenId)}>
+                      Open LootBox
+                    </StyledButton>
                   </NFTBox>
                 ))}
               </NFTGrid>
@@ -236,9 +239,6 @@ function App() {
                 {rewardMessage}
               </s.TextDescription>
             )}
-            <StyledButton onClick={() => openLootBox(selectedToken)}>
-              Open LootBox
-            </StyledButton>
           </>
         ) : (
           <s.TextDescription
