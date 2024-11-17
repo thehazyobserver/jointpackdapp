@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
-import { initializeContract, fetchData } from "./redux/data/dataActions"; // Import actions
+import { initializeContract, fetchData } from "./redux/data/dataActions";
 import * as s from "./styles/globalStyles";
 import styled from "styled-components";
-import defaultImage from "./assets/images/JOINTPACK.jpg"; // Update the import path
+import defaultImage from "./assets/images/JOINTPACK.jpg";
 
 // Utility Functions
 const truncate = (input, len) =>
@@ -22,12 +22,12 @@ const NFTGrid = styled.div`
 
 const NFTImage = styled.img`
   width: 100px;
-  height: 100px; // Ensure height is set
+  height: 100px;
   margin: 5px;
   border: ${({ selected }) => (selected ? "5px solid var(--accent)" : "none")};
   cursor: pointer;
-  display: block; // Ensure it's displayed
-  z-index: 10; // Ensure it's above other elements
+  display: block;
+  z-index: 10;
 `;
 
 const StyledButton = styled.button`
@@ -48,9 +48,10 @@ const StyledButton = styled.button`
 function App() {
   const dispatch = useDispatch();
   const blockchain = useSelector((state) => state.blockchain);
-  const data = useSelector((state) => state.data); // Access data from Redux state
+  const data = useSelector((state) => state.data);
   const [selectedToken, setSelectedToken] = useState(null);
-  const [rewardMessage, setRewardMessage] = useState(""); // State to store reward message
+  const [rewardMessage, setRewardMessage] = useState("");
+  const [configLoaded, setConfigLoaded] = useState(false);
   const [CONFIG, SET_CONFIG] = useState({
     CONTRACT_ADDRESS: "",
     SCAN_LINK: "",
@@ -75,6 +76,7 @@ function App() {
       });
       const config = await configResponse.json();
       SET_CONFIG(config);
+      setConfigLoaded(true);
     } catch (error) {
       console.error("Error fetching config:", error);
     }
@@ -86,7 +88,11 @@ function App() {
 
   // Connect Wallet Handler
   const handleConnectWallet = () => {
-    dispatch(connect());
+    if (configLoaded) {
+      dispatch(connect(CONFIG));
+    } else {
+      console.error("Config not loaded yet.");
+    }
   };
 
   // Initialize contract when account and web3 are available
@@ -103,6 +109,30 @@ function App() {
     }
   }, [blockchain.account, blockchain.LootBoxNFT, dispatch]);
 
+  // Handle account and chain changes
+  useEffect(() => {
+    if (window.ethereum) {
+      const handleAccountsChanged = (accounts) => {
+        dispatch({ type: "UPDATE_ACCOUNT", payload: { account: accounts[0] } });
+        dispatch(initializeContract());
+        dispatch(fetchData());
+      };
+
+      const handleChainChanged = () => {
+        window.location.reload();
+      };
+
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
+      window.ethereum.on("chainChanged", handleChainChanged);
+
+      // Cleanup function
+      return () => {
+        window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+        window.ethereum.removeListener("chainChanged", handleChainChanged);
+      };
+    }
+  }, [dispatch]);
+
   // Open LootBox
   const openLootBox = async (tokenId) => {
     try {
@@ -112,7 +142,6 @@ function App() {
       setRewardMessage(
         `LootBox #${tokenId} opened successfully. Check your balance for rewards.`
       );
-      // Refresh the NFT list after opening a LootBox
       dispatch(fetchData());
     } catch (error) {
       console.error("Error opening lootbox:", error);
@@ -128,11 +157,23 @@ function App() {
         style={{ padding: 24, backgroundColor: "var(--primary)" }}
         image={CONFIG.SHOW_BACKGROUND ? "/config/images/bg.png" : null}
       >
-        <StyledButton onClick={handleConnectWallet}>
+        <StyledButton onClick={handleConnectWallet} disabled={!configLoaded}>
           {blockchain.account
             ? `Connected: ${truncate(blockchain.account, 15)}`
             : "Connect Wallet"}
         </StyledButton>
+
+        {blockchain.errorMsg !== "" && (
+          <s.TextDescription
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              color: "var(--accent-text)",
+            }}
+          >
+            {blockchain.errorMsg}
+          </s.TextDescription>
+        )}
 
         {blockchain.account && blockchain.LootBoxNFT ? (
           <>
