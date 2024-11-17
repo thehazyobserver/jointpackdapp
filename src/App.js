@@ -5,7 +5,6 @@ import { connect } from "./redux/blockchain/blockchainActions";
 import { initializeContract, fetchData } from "./redux/data/dataActions";
 import * as s from "./styles/globalStyles";
 import styled from "styled-components";
-import defaultImage from "./assets/images/JOINTPACK.jpg";
 
 // Utility Functions
 const truncate = (input, len) =>
@@ -86,7 +85,7 @@ function App() {
 
   useEffect(() => {
     getConfig();
-  }, []);
+  }, [getConfig]);
 
   // Connect Wallet Handler
   const handleConnectWallet = () => {
