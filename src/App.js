@@ -20,17 +20,23 @@ const NFTGrid = styled.div`
   margin-bottom: 20px;
 `;
 
-const NFTImage = styled.img`
-  width: 100px;
-  height: 100px;
+const NFTBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 200px;
   margin: 5px;
   border: 5px solid white; /* Add a white border */
   background-color: #333; /* Add a background fill */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
+  text-align: center;
+`;
+
+const NFTImage = styled.img`
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
 `;
 
 const StyledButton = styled.button`
@@ -194,7 +200,7 @@ function App() {
             {data.nfts && data.nfts.length > 0 ? (
               <NFTGrid>
                 {data.nfts.map(({ tokenId, image }) => (
-                  <div key={tokenId}>
+                  <NFTBox key={tokenId}>
                     <NFTImage
                       src={image || defaultImage} // Use defaultImage if image is not provided
                       alt={`LootBox ${tokenId}`}
@@ -207,7 +213,7 @@ function App() {
                     <StyledButton onClick={() => openLootBox(tokenId)}>
                       Open LootBox
                     </StyledButton>
-                  </div>
+                  </NFTBox>
                 ))}
               </NFTGrid>
             ) : (
