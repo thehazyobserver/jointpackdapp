@@ -65,29 +65,29 @@ function App() {
   }, []);
 
   const fetchNFTs = useCallback(async () => {
-    if (!blockchain.account || !blockchain.erc721Contract) {
+    if (!blockchain.account || !blockchain.LootBoxNFT) {
       console.log("Blockchain account or contract not available");
       return;
     }
 
     try {
-      const balance = await blockchain.erc721Contract.methods.balanceOf(blockchain.account).call();
+      const balance = await blockchain.LootBoxNFT.methods.balanceOf(blockchain.account).call();
       const nftData = [];
       for (let i = 0; i < balance; i++) {
-        const tokenId = await blockchain.erc721Contract.methods.tokenOfOwnerByIndex(blockchain.account, i).call();
+        const tokenId = await blockchain.LootBoxNFT.methods.tokenOfOwnerByIndex(blockchain.account, i).call();
         nftData.push({ tokenId: tokenId.toString(), image: defaultImage }); // Convert BigInt to string and use the default image
       }
       setNfts(nftData);
     } catch (error) {
       console.error("Error fetching NFTs:", error);
     }
-  }, [blockchain.account, blockchain.erc721Contract]);
+  }, [blockchain.account, blockchain.LootBoxNFT]);
 
   useEffect(() => {
-    if (blockchain.account && blockchain.erc721Contract) {
+    if (blockchain.account && blockchain.LootBoxNFT) {
       fetchNFTs();
     }
-  }, [blockchain.account, blockchain.erc721Contract, fetchNFTs]);
+  }, [blockchain.account, blockchain.LootBoxNFT, fetchNFTs]);
 
   // Fetch config.json data
   const getConfig = async () => {
@@ -108,7 +108,7 @@ function App() {
   // Open LootBox
   const openLootBox = async (tokenId) => {
     try {
-      await blockchain.erc721Contract.methods.openLootBox(tokenId).send({ from: blockchain.account });
+      await blockchain.LootBoxNFT.methods.openLootBox(tokenId).send({ from: blockchain.account });
       setRewardMessage(`LootBox #${tokenId} opened successfully. Check your balance for rewards.`);
     } catch (error) {
       console.error("Error opening lootbox:", error);
@@ -134,7 +134,7 @@ function App() {
             : "Connect Wallet"}
         </StyledButton>
 
-        {blockchain.account && blockchain.erc721Contract ? (
+        {blockchain.account && blockchain.LootBoxNFT ? (
           <>
             <s.TextTitle
               style={{

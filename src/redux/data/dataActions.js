@@ -1,4 +1,4 @@
-// dataActions.js
+// src/redux/data/dataActions.js
 import { LootBoxNFT } from './contracts'; // Ensure the contract is imported correctly
 
 export const initializeContract = () => {
