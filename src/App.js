@@ -1,5 +1,5 @@
 // App.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
 import { initializeContract, fetchData } from "./redux/data/dataActions";
@@ -66,7 +66,7 @@ function App() {
   });
 
   // Fetch config.json data
-  const getConfig = async () => {
+  const getConfig = useCallback(async () => {
     try {
       const configResponse = await fetch("/config/config.json", {
         headers: {
@@ -82,11 +82,11 @@ function App() {
     } catch (error) {
       console.error("Error fetching config:", error);
     }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     getConfig();
-  }, []);
+  }, [getConfig]);
 
   // Connect Wallet Handler
   const handleConnectWallet = () => {
