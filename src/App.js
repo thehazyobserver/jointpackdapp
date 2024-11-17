@@ -77,7 +77,6 @@ function App() {
         const tokenId = await blockchain.erc721Contract.methods.tokenOfOwnerByIndex(blockchain.account, i).call();
         nftData.push({ tokenId: tokenId.toString(), image: defaultImage }); // Convert BigInt to string and use the default image
       }
-      console.log("Fetched NFTs:", nftData); // Log fetched NFTs
       setNfts(nftData);
     } catch (error) {
       console.error("Error fetching NFTs:", error);
@@ -134,9 +133,6 @@ function App() {
             ? `Connected: ${truncate(blockchain.account, 15)}`
             : "Connect Wallet"}
         </StyledButton>
-
-        {console.log("Account:", blockchain.account)}
-        {console.log("Contract:", blockchain.erc721Contract)}
 
         {blockchain.account && blockchain.erc721Contract ? (
           <>
