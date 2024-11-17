@@ -138,7 +138,7 @@ function App() {
     try {
       await blockchain.LootBoxNFT.methods
         .openLootBox(tokenId)
-        .send({ from: blockchain.account });
+        .send({ from: blockchain.account, gas: CONFIG.GAS_LIMIT });
       setRewardMessage(
         `LootBox #${tokenId} opened successfully. Check your balance for rewards.`
       );
