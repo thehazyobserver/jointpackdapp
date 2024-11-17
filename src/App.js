@@ -77,6 +77,8 @@ function App() {
       const config = await configResponse.json();
       SET_CONFIG(config);
       setConfigLoaded(true);
+      // Initialize contract with the fetched address
+      dispatch(initializeContract(config.CONTRACT_ADDRESS));
     } catch (error) {
       console.error("Error fetching config:", error);
     }
@@ -98,9 +100,9 @@ function App() {
   // Initialize contract when account and web3 are available
   useEffect(() => {
     if (blockchain.account && blockchain.web3) {
-      dispatch(initializeContract());
+      dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
     }
-  }, [blockchain.account, blockchain.web3, dispatch]);
+  }, [blockchain.account, blockchain.web3, dispatch, CONFIG.CONTRACT_ADDRESS]);
 
   // Fetch data when contract is initialized
   useEffect(() => {
@@ -114,7 +116,7 @@ function App() {
     if (window.ethereum) {
       const handleAccountsChanged = (accounts) => {
         dispatch({ type: "UPDATE_ACCOUNT", payload: { account: accounts[0] } });
-        dispatch(initializeContract());
+        dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
         dispatch(fetchData());
       };
 
@@ -131,7 +133,7 @@ function App() {
         window.ethereum.removeListener("chainChanged", handleChainChanged);
       };
     }
-  }, [dispatch]);
+  }, [dispatch, CONFIG.CONTRACT_ADDRESS]);
 
   // Open LootBox
   const openLootBox = async (tokenId) => {
