@@ -28,7 +28,7 @@ const NFTBox = styled.div`
   width: 150px;
   height: 200px;
   margin: 5px;
-  border: 5px solid white; /* Add a white border */
+  border: 5px solid black; /* Change border color to black */
   background-color: white; /* Change background color to white */
   text-align: center;
 `;
