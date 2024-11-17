@@ -29,7 +29,7 @@ const NFTBox = styled.div`
   height: 200px;
   margin: 5px;
   border: 5px solid white; /* Add a white border */
-  background-color: #333; /* Add a background fill */
+  background-color: white; /* Change background color to white */
   text-align: center;
 `;
 
@@ -210,9 +210,6 @@ function App() {
                     <s.TextDescription style={{ textAlign: "center" }}>
                       {`Token ID: ${tokenId}`}
                     </s.TextDescription>
-                    <StyledButton onClick={() => openLootBox(tokenId)}>
-                      Open LootBox
-                    </StyledButton>
                   </NFTBox>
                 ))}
               </NFTGrid>
@@ -239,6 +236,9 @@ function App() {
                 {rewardMessage}
               </s.TextDescription>
             )}
+            <StyledButton onClick={() => openLootBox(selectedToken)}>
+              Open LootBox
+            </StyledButton>
           </>
         ) : (
           <s.TextDescription
