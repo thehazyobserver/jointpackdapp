@@ -5,6 +5,7 @@ import { connect } from "./redux/blockchain/blockchainActions";
 import { initializeContract, fetchData } from "./redux/data/dataActions";
 import * as s from "./styles/globalStyles";
 import styled from "styled-components";
+import defaultImage from "./assets/images/JOINTPACK.jpg"; // Re-import the default image
 
 // Utility Functions
 const truncate = (input, len) =>
@@ -85,7 +86,7 @@ function App() {
 
   useEffect(() => {
     getConfig();
-  }, [getConfig]);
+  }, []);
 
   // Connect Wallet Handler
   const handleConnectWallet = () => {
@@ -193,7 +194,7 @@ function App() {
                 {data.nfts.map(({ tokenId, image }) => (
                   <div key={tokenId}>
                     <NFTImage
-                      src={image}
+                      src={image || defaultImage} // Use defaultImage if image is not provided
                       alt={`LootBox ${tokenId}`}
                       selected={selectedToken === tokenId}
                       onClick={() => setSelectedToken(tokenId)}
