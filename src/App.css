@@ -50,12 +50,12 @@ body {
 
 .StyledButton {
   padding: 10px;
-  border-radius: 50px;
+  border-radius: 0; /* Make the button rectangular */
   border: none;
   background-color: black; /* Make the button black */
   font-weight: bold;
   color: white; /* Font color white */
-  width: 150px;
+  width: 100%; /* Make the button the width of the box */
   cursor: pointer;
   text-align: center;
 
