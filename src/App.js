@@ -1,12 +1,15 @@
-import React, { useEffect, useState, useCallback } from "react";
+// App.js
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
+import { initializeContract, fetchData } from "./redux/data/dataActions"; // Import actions
 import * as s from "./styles/globalStyles";
 import styled from "styled-components";
 import defaultImage from "./assets/images/JOINTPACK.jpg"; // Update the import path
 
 // Utility Functions
-const truncate = (input, len) => (input.length > len ? `${input.substring(0, len)}...` : input);
+const truncate = (input, len) =>
+  input.length > len ? `${input.substring(0, len)}...` : input;
 
 // Styled Components
 const NFTGrid = styled.div`
@@ -36,6 +39,7 @@ const StyledButton = styled.button`
   color: var(--secondary-text);
   width: 150px;
   cursor: pointer;
+
   :hover {
     background-color: var(--accent);
   }
@@ -44,7 +48,7 @@ const StyledButton = styled.button`
 function App() {
   const dispatch = useDispatch();
   const blockchain = useSelector((state) => state.blockchain);
-  const [nfts, setNfts] = useState([]);
+  const data = useSelector((state) => state.data); // Access data from Redux state
   const [selectedToken, setSelectedToken] = useState(null);
   const [rewardMessage, setRewardMessage] = useState(""); // State to store reward message
   const [CONFIG, SET_CONFIG] = useState({
@@ -59,35 +63,6 @@ function App() {
     SYMBOL: "",
     SHOW_BACKGROUND: true,
   });
-
-  useEffect(() => {
-    getConfig();
-  }, []);
-
-  const fetchNFTs = useCallback(async () => {
-    if (!blockchain.account || !blockchain.LootBoxNFT) {
-      console.log("Blockchain account or contract not available");
-      return;
-    }
-
-    try {
-      const balance = await blockchain.LootBoxNFT.methods.balanceOf(blockchain.account).call();
-      const nftData = [];
-      for (let i = 0; i < balance; i++) {
-        const tokenId = await blockchain.LootBoxNFT.methods.tokenOfOwnerByIndex(blockchain.account, i).call();
-        nftData.push({ tokenId: tokenId.toString(), image: defaultImage }); // Convert BigInt to string and use the default image
-      }
-      setNfts(nftData);
-    } catch (error) {
-      console.error("Error fetching NFTs:", error);
-    }
-  }, [blockchain.account, blockchain.LootBoxNFT]);
-
-  useEffect(() => {
-    if (blockchain.account && blockchain.LootBoxNFT) {
-      fetchNFTs();
-    }
-  }, [blockchain.account, blockchain.LootBoxNFT, fetchNFTs]);
 
   // Fetch config.json data
   const getConfig = async () => {
@@ -105,11 +80,40 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    getConfig();
+  }, []);
+
+  // Connect Wallet Handler
+  const handleConnectWallet = () => {
+    dispatch(connect());
+  };
+
+  // Initialize contract when account and web3 are available
+  useEffect(() => {
+    if (blockchain.account && blockchain.web3) {
+      dispatch(initializeContract());
+    }
+  }, [blockchain.account, blockchain.web3, dispatch]);
+
+  // Fetch data when contract is initialized
+  useEffect(() => {
+    if (blockchain.account && blockchain.LootBoxNFT) {
+      dispatch(fetchData());
+    }
+  }, [blockchain.account, blockchain.LootBoxNFT, dispatch]);
+
   // Open LootBox
   const openLootBox = async (tokenId) => {
     try {
-      await blockchain.LootBoxNFT.methods.openLootBox(tokenId).send({ from: blockchain.account });
-      setRewardMessage(`LootBox #${tokenId} opened successfully. Check your balance for rewards.`);
+      await blockchain.LootBoxNFT.methods
+        .openLootBox(tokenId)
+        .send({ from: blockchain.account });
+      setRewardMessage(
+        `LootBox #${tokenId} opened successfully. Check your balance for rewards.`
+      );
+      // Refresh the NFT list after opening a LootBox
+      dispatch(fetchData());
     } catch (error) {
       console.error("Error opening lootbox:", error);
       alert("Failed to open LootBox. Check console for details.");
@@ -124,11 +128,7 @@ function App() {
         style={{ padding: 24, backgroundColor: "var(--primary)" }}
         image={CONFIG.SHOW_BACKGROUND ? "/config/images/bg.png" : null}
       >
-        <StyledButton
-          onClick={() => {
-            dispatch(connect(CONFIG));
-          }}
-        >
+        <StyledButton onClick={handleConnectWallet}>
           {blockchain.account
             ? `Connected: ${truncate(blockchain.account, 15)}`
             : "Connect Wallet"}
@@ -146,9 +146,9 @@ function App() {
             >
               Your LootBoxes
             </s.TextTitle>
-            {nfts.length > 0 ? (
+            {data.nfts && data.nfts.length > 0 ? (
               <NFTGrid>
-                {nfts.map(({ tokenId, image }) => (
+                {data.nfts.map(({ tokenId, image }) => (
                   <div key={tokenId}>
                     <NFTImage
                       src={image}
@@ -166,7 +166,13 @@ function App() {
                 ))}
               </NFTGrid>
             ) : (
-              <s.TextDescription style={{ textAlign: "center", fontSize: 20, color: "var(--accent-text)" }}>
+              <s.TextDescription
+                style={{
+                  textAlign: "center",
+                  fontSize: 20,
+                  color: "var(--accent-text)",
+                }}
+              >
                 No $JOINT Packs found.
               </s.TextDescription>
             )}
