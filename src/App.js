@@ -170,6 +170,10 @@ function App() {
         `LootBox #${tokenId} opened successfully. Waiting for reward...`
       );
 
+      // Debugging logs
+      console.log('blockchain.LootBoxNFT:', blockchain.LootBoxNFT);
+      console.log('blockchain.LootBoxNFT.events:', blockchain.LootBoxNFT.events);
+
       // Set up a one-time event listener for RewardClaimed on the event emitter
       if (blockchain.LootBoxNFT && blockchain.LootBoxNFT.events) {
         blockchain.LootBoxNFT.events.RewardClaimed({
