@@ -160,7 +160,7 @@ function App() {
         if (events.length > 0) {
           const { amount } = events[0].returnValues;
           setRewardMessage(
-            `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} tokens as a reward for LootBox #${tokenId}.`
+            `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} $JOINT from $JOINT PACK #${tokenId}. The $JOINT PACK is now burnt.`
           );
           dispatch(fetchData());
         } else if (Date.now() - startTime < pollTimeout) {
