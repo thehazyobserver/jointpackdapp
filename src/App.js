@@ -192,7 +192,7 @@ function App() {
       }
     } catch (error) {
       console.error('Error opening lootbox:', error);
-      alert('Failed to OPEN $JOINT PACK. Check console for details.');
+      setRewardMessage('Failed to open LootBox. Check console for details.');
     }
   };
 
