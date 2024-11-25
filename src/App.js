@@ -176,21 +176,21 @@ function App() {
 
       // Set up a one-time event listener for RewardClaimed on the event emitter
       if (blockchain.LootBoxNFT && blockchain.LootBoxNFT.events) {
-        blockchain.LootBoxNFT.once('RewardClaimed', {
+        blockchain.LootBoxNFT.events.RewardClaimed({
           filter: { user: blockchain.account, tokenId: tokenId },
           fromBlock: fromBlock,
-        }, (error, event) => {
-          if (error) {
-            console.error('Error receiving RewardClaimed event:', error);
-            setRewardMessage('An error occurred while fetching your reward. Please check your wallet later.');
-          } else {
+        })
+          .once('data', (event) => {
             const { amount } = event.returnValues;
             setRewardMessage(
               `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} tokens as a reward for LootBox #${tokenId}.`
             );
             dispatch(fetchData());
-          }
-        });
+          })
+          .on('error', (error) => {
+            console.error('Error receiving RewardClaimed event:', error);
+            setRewardMessage('An error occurred while fetching your reward. Please check your wallet later.');
+          });
       } else {
         console.error('LootBoxNFT contract or events not defined.');
       }
