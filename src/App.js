@@ -337,7 +337,7 @@ function App() {
               color: "var(--accent-text)",
             }}
           >
-            Please connect your wallet to view your LootBoxes.
+            Please connect your wallet to view your $JOINT PACKs.
           </s.TextDescription>
         )}
       </s.Container>
