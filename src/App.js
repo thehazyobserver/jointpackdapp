@@ -6,6 +6,7 @@ import { initializeContract, fetchData } from "./redux/data/dataActions";
 import * as s from "./styles/globalStyles";
 import styled from "styled-components";
 import defaultImage from "./assets/images/JOINTPACK.jpg"; // Re-import the default image
+import passTheJointImage from "./assets/images/PassTheJoint.gif"; // Import the new image
 
 // Utility Functions
 const truncate = (input, len) =>
@@ -52,6 +53,21 @@ const StyledButton = styled.button`
 
   :hover {
     background-color: #444; /* Darker shade on hover */
+  }
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  a {
+    margin: 0 10px;
+  }
+
+  img {
+    width: 40px;
+    height: 40px;
   }
 `;
 
@@ -238,6 +254,21 @@ function App() {
           </s.TextDescription>
         )}
 
+        <ButtonContainer>
+          <a href="https://paintswap.finance/marketplace/fantom/collections/pass-the-%24joint" target="_blank" rel="noopener noreferrer">
+            <img src="images/paintswap.png" alt="PaintSwap" />
+          </a>
+          <a href="https://x.com/PassTheJointFTM" target="_blank" rel="noopener noreferrer">
+            <img src="images/x.png" alt="Twitter" />
+          </a>
+          <a href="https://t.me/PASSTHEJOINTFTM/" target="_blank" rel="noopener noreferrer">
+            <img src="images/telegram.png" alt="Telegram" />
+          </a>
+          <a href="https://passthejoint.netlify.app/" target="_blank" rel="noopener noreferrer">
+            <img src={passTheJointImage} alt="Pass the $JOINT" />
+          </a>
+        </ButtonContainer>
+
         {blockchain.account && blockchain.LootBoxNFT ? (
           <>
             <s.TextTitle
@@ -301,7 +332,7 @@ function App() {
               color: "var(--accent-text)",
             }}
           >
-            Please connect your wallet to view your $Joint Packs.
+            Please connect your wallet to view your LootBoxes.
           </s.TextDescription>
         )}
       </s.Container>
