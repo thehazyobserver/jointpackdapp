@@ -180,7 +180,7 @@ function App() {
           filter: { user: blockchain.account, tokenId: tokenId },
           fromBlock: fromBlock,
         })
-          .once('data', (event) => {
+          .on('data', (event) => {
             const { amount } = event.returnValues;
             setRewardMessage(
               `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} tokens as a reward for LootBox #${tokenId}.`
