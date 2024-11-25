@@ -146,18 +146,40 @@ function App() {
   // OPEN $JOINT PACK
   const openLootBox = async (tokenId) => {
     try {
-      await blockchain.LootBoxNFT.methods
+      const tx = await blockchain.LootBoxNFT.methods
         .openLootBox(tokenId)
         .send({ from: blockchain.account, gas: CONFIG.GAS_LIMIT });
+  
+      // Get the block number from the transaction receipt
+      const txReceipt = await blockchain.web3.eth.getTransactionReceipt(tx.transactionHash);
+      const fromBlock = txReceipt.blockNumber;
+  
       setRewardMessage(
-        `LootBox #${tokenId} opened successfully. Check your balance for rewards.`
+        `LootBox #${tokenId} opened successfully. Waiting for reward...`
       );
-      dispatch(fetchData());
+  
+      // Set up a one-time event listener for RewardClaimed
+      blockchain.LootBoxNFT.once('RewardClaimed', {
+        filter: { user: blockchain.account, tokenId: tokenId },
+        fromBlock: fromBlock,
+      }, function(error, event) {
+        if (error) {
+          console.error(error);
+          return;
+        }
+        const { amount } = event.returnValues;
+        setRewardMessage(
+          `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} tokens as a reward for LootBox #${tokenId}.`
+        );
+        dispatch(fetchData());
+      });
+  
     } catch (error) {
       console.error("Error opening lootbox:", error);
       alert("Failed to OPEN $JOINT PACK. Check console for details.");
     }
   };
+  
 
   return (
     <s.Screen>
