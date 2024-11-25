@@ -7,6 +7,9 @@ import * as s from "./styles/globalStyles";
 import styled from "styled-components";
 import defaultImage from "./assets/images/JOINTPACK.jpg"; // Re-import the default image
 import passTheJointImage from "./assets/images/PassTheJoint.gif"; // Import the new image
+import paintswapImage from "./assets/images/paintswap.png"; // Import the paintswap image
+import telegramImage from "./assets/images/telegram.png"; // Import the telegram image
+import twitterImage from "./assets/images/x.png"; // Import the twitter image
 
 // Utility Functions
 const truncate = (input, len) =>
@@ -15,7 +18,7 @@ const truncate = (input, len) =>
 // Styled Components
 const NFTGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 20px;
   justify-items: center;
   margin-bottom: 20px;
@@ -26,7 +29,8 @@ const NFTBox = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 150px;
+  width: 100%;
+  max-width: 150px;
   height: 200px;
   margin: 5px;
   border: 5px solid black; /* Change border color to black */
@@ -59,10 +63,11 @@ const StyledButton = styled.button`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   margin-bottom: 20px;
 
   a {
-    margin: 0 10px;
+    margin: 10px;
   }
 
   img {
@@ -256,13 +261,13 @@ function App() {
 
         <ButtonContainer>
           <a href="https://paintswap.finance/marketplace/fantom/collections/pass-the-%24joint" target="_blank" rel="noopener noreferrer">
-            <img src="images/paintswap.png" alt="PaintSwap" />
+            <img src={paintswapImage} alt="PaintSwap" />
           </a>
           <a href="https://x.com/PassTheJointFTM" target="_blank" rel="noopener noreferrer">
-            <img src="images/x.png" alt="Twitter" />
+            <img src={twitterImage} alt="Twitter" />
           </a>
           <a href="https://t.me/PASSTHEJOINTFTM/" target="_blank" rel="noopener noreferrer">
-            <img src="images/telegram.png" alt="Telegram" />
+            <img src={telegramImage} alt="Telegram" />
           </a>
           <a href="https://passthejoint.netlify.app/" target="_blank" rel="noopener noreferrer">
             <img src={passTheJointImage} alt="Pass the $JOINT" />
