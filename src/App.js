@@ -145,7 +145,7 @@ function App() {
 
   // Poll for RewardClaimed event
   const pollForRewardClaimed = async (tokenId, fromBlock) => {
-    const pollInterval = 5000; // Poll every 5 seconds
+    const pollInterval = 2000; // Poll every 2 seconds
     const pollTimeout = 60000; // Timeout after 60 seconds
     const startTime = Date.now();
 
