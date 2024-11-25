@@ -143,21 +143,21 @@ function App() {
     }
   }, [dispatch, CONFIG.CONTRACT_ADDRESS]);
 
-  // OPEN $JOINT PACK
+  // Open LootBox
   const openLootBox = async (tokenId) => {
     try {
       setRewardMessage(`Opening LootBox #${tokenId}...`);
-  
+
       const tx = await blockchain.LootBoxNFT.methods
         .openLootBox(tokenId)
         .send({ from: blockchain.account, gas: CONFIG.GAS_LIMIT });
-  
+
       console.log('Transaction Receipt:', tx);
-  
+
       const transactionHash = tx.transactionHash;
-  
+
       let fromBlock;
-  
+
       if (tx.blockNumber) {
         fromBlock = tx.blockNumber;
       } else {
@@ -165,33 +165,36 @@ function App() {
         const txReceipt = await blockchain.web3.eth.getTransactionReceipt(transactionHash);
         fromBlock = txReceipt.blockNumber;
       }
-  
+
       setRewardMessage(
         `LootBox #${tokenId} opened successfully. Waiting for reward...`
       );
-  
+
       // Set up a one-time event listener for RewardClaimed on the event emitter
-      blockchain.LootBoxNFT.events.RewardClaimed({
-        filter: { user: blockchain.account, tokenId: tokenId },
-        fromBlock: fromBlock,
-      })
-        .once('data', (event) => {
-          const { amount } = event.returnValues;
-          setRewardMessage(
-            `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} tokens as a reward for LootBox #${tokenId}.`
-          );
-          dispatch(fetchData());
+      if (blockchain.LootBoxNFT && blockchain.LootBoxNFT.events) {
+        blockchain.LootBoxNFT.events.RewardClaimed({
+          filter: { user: blockchain.account, tokenId: tokenId },
+          fromBlock: fromBlock,
         })
-        .on('error', (error) => {
-          console.error('Error receiving RewardClaimed event:', error);
-          setRewardMessage('An error occurred while fetching your reward. Please check your wallet later.');
-        });
+          .once('data', (event) => {
+            const { amount } = event.returnValues;
+            setRewardMessage(
+              `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} tokens as a reward for LootBox #${tokenId}.`
+            );
+            dispatch(fetchData());
+          })
+          .on('error', (error) => {
+            console.error('Error receiving RewardClaimed event:', error);
+            setRewardMessage('An error occurred while fetching your reward. Please check your wallet later.');
+          });
+      } else {
+        console.error('LootBoxNFT contract or events not defined.');
+      }
     } catch (error) {
       console.error('Error opening lootbox:', error);
       alert('Failed to OPEN $JOINT PACK. Check console for details.');
     }
   };
-  
 
   return (
     <s.Screen>
@@ -229,7 +232,7 @@ function App() {
                 color: "var(--accent-text)",
               }}
             >
-              Your $JOINT Packs
+              Your LootBoxes
             </s.TextTitle>
             {data.nfts && data.nfts.length > 0 ? (
               <NFTGrid>
@@ -245,7 +248,7 @@ function App() {
                       {`Token ID: ${tokenId}`}
                     </s.TextDescription>
                     <StyledButton onClick={() => openLootBox(tokenId)}>
-                      OPEN $JOINT PACK
+                      Open LootBox
                     </StyledButton>
                   </NFTBox>
                 ))}
@@ -282,7 +285,7 @@ function App() {
               color: "var(--accent-text)",
             }}
           >
-            Please connect your wallet to view your $JOINT Packs.
+            Please connect your wallet to view your LootBoxes.
           </s.TextDescription>
         )}
       </s.Container>
