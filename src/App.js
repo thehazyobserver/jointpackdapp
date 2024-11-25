@@ -248,7 +248,7 @@ function App() {
                 color: "var(--accent-text)",
               }}
             >
-              Your LootBoxes
+              Your $Joint Packs
             </s.TextTitle>
             {data.nfts && data.nfts.length > 0 ? (
               <NFTGrid>
@@ -301,7 +301,7 @@ function App() {
               color: "var(--accent-text)",
             }}
           >
-            Please connect your wallet to view your LootBoxes.
+            Please connect your wallet to view your $Joint Packs.
           </s.TextDescription>
         )}
       </s.Container>
