@@ -143,6 +143,40 @@ function App() {
     }
   }, [dispatch, CONFIG.CONTRACT_ADDRESS]);
 
+  // Poll for RewardClaimed event
+  const pollForRewardClaimed = async (tokenId, fromBlock) => {
+    const pollInterval = 5000; // Poll every 5 seconds
+    const pollTimeout = 60000; // Timeout after 60 seconds
+    const startTime = Date.now();
+
+    const poll = async () => {
+      try {
+        const events = await blockchain.LootBoxNFT.getPastEvents('RewardClaimed', {
+          filter: { user: blockchain.account, tokenId: tokenId },
+          fromBlock: fromBlock,
+          toBlock: 'latest',
+        });
+
+        if (events.length > 0) {
+          const { amount } = events[0].returnValues;
+          setRewardMessage(
+            `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} tokens as a reward for LootBox #${tokenId}.`
+          );
+          dispatch(fetchData());
+        } else if (Date.now() - startTime < pollTimeout) {
+          setTimeout(poll, pollInterval);
+        } else {
+          setRewardMessage('Reward not received within the expected time. Please check your wallet later.');
+        }
+      } catch (error) {
+        console.error('Error polling for RewardClaimed event:', error);
+        setRewardMessage('An error occurred while fetching your reward. Please check your wallet later.');
+      }
+    };
+
+    poll();
+  };
+
   // Open LootBox
   const openLootBox = async (tokenId) => {
     try {
@@ -170,30 +204,8 @@ function App() {
         `LootBox #${tokenId} opened successfully. Waiting for reward...`
       );
 
-      // Debugging logs
-      console.log('blockchain.LootBoxNFT:', blockchain.LootBoxNFT);
-      console.log('blockchain.LootBoxNFT.events:', blockchain.LootBoxNFT.events);
-
-      // Set up a one-time event listener for RewardClaimed on the event emitter
-      if (blockchain.LootBoxNFT && blockchain.LootBoxNFT.events) {
-        blockchain.LootBoxNFT.events.RewardClaimed({
-          filter: { user: blockchain.account, tokenId: tokenId },
-          fromBlock: fromBlock,
-        })
-          .on('data', (event) => {
-            const { amount } = event.returnValues;
-            setRewardMessage(
-              `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} tokens as a reward for LootBox #${tokenId}.`
-            );
-            dispatch(fetchData());
-          })
-          .on('error', (error) => {
-            console.error('Error receiving RewardClaimed event:', error);
-            setRewardMessage('An error occurred while fetching your reward. Please check your wallet later.');
-          });
-      } else {
-        console.error('LootBoxNFT contract or events not defined.');
-      }
+      // Poll for RewardClaimed event
+      pollForRewardClaimed(tokenId, fromBlock);
     } catch (error) {
       console.error('Error opening lootbox:', error);
       setRewardMessage('Failed to open LootBox. Check console for details.');
