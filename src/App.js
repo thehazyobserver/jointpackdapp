@@ -146,37 +146,49 @@ function App() {
   // OPEN $JOINT PACK
   const openLootBox = async (tokenId) => {
     try {
+      setRewardMessage(`Opening LootBox #${tokenId}...`);
+  
       const tx = await blockchain.LootBoxNFT.methods
         .openLootBox(tokenId)
         .send({ from: blockchain.account, gas: CONFIG.GAS_LIMIT });
   
-      // Get the block number from the transaction receipt
-      const txReceipt = await blockchain.web3.eth.getTransactionReceipt(tx.transactionHash);
-      const fromBlock = txReceipt.blockNumber;
+      console.log('Transaction Receipt:', tx);
+  
+      const transactionHash = tx.transactionHash;
+  
+      let fromBlock;
+  
+      if (tx.blockNumber) {
+        fromBlock = tx.blockNumber;
+      } else {
+        // Fetch the transaction receipt if blockNumber is not present
+        const txReceipt = await blockchain.web3.eth.getTransactionReceipt(transactionHash);
+        fromBlock = txReceipt.blockNumber;
+      }
   
       setRewardMessage(
         `LootBox #${tokenId} opened successfully. Waiting for reward...`
       );
   
-      // Set up a one-time event listener for RewardClaimed
-      blockchain.LootBoxNFT.once('RewardClaimed', {
+      // Set up a one-time event listener for RewardClaimed on the event emitter
+      blockchain.LootBoxNFT.events.RewardClaimed({
         filter: { user: blockchain.account, tokenId: tokenId },
         fromBlock: fromBlock,
-      }, function(error, event) {
-        if (error) {
-          console.error(error);
-          return;
-        }
-        const { amount } = event.returnValues;
-        setRewardMessage(
-          `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} tokens as a reward for LootBox #${tokenId}.`
-        );
-        dispatch(fetchData());
-      });
-  
+      })
+        .once('data', (event) => {
+          const { amount } = event.returnValues;
+          setRewardMessage(
+            `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} tokens as a reward for LootBox #${tokenId}.`
+          );
+          dispatch(fetchData());
+        })
+        .on('error', (error) => {
+          console.error('Error receiving RewardClaimed event:', error);
+          setRewardMessage('An error occurred while fetching your reward. Please check your wallet later.');
+        });
     } catch (error) {
-      console.error("Error opening lootbox:", error);
-      alert("Failed to OPEN $JOINT PACK. Check console for details.");
+      console.error('Error opening lootbox:', error);
+      alert('Failed to OPEN $JOINT PACK. Check console for details.');
     }
   };
   
