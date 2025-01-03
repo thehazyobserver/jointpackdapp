@@ -7,7 +7,7 @@ import * as s from "./styles/globalStyles";
 import styled from "styled-components";
 import defaultImage from "./assets/images/JOINTPACK.jpg"; // Re-import the default image
 import passTheJointImage from "./assets/images/PassTheJoint.gif"; // Import the new image
-import paintswapImage from "./assets/images/paintswap.png"; // Import the paintswap image
+import paintswapImage from "./assets/images/paintswap.svg"; // Import the paintswap image
 import telegramImage from "./assets/images/telegram.png"; // Import the telegram image
 import twitterImage from "./assets/images/x.png"; // Import the twitter image
 
