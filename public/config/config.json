@@ -1,13 +1,13 @@
 {
-  "CONTRACT_ADDRESS": "0xcBBC42c3b6198dd3856B77e92a69Adac81abCF5a",
-  "SCAN_LINK": "https://ftmscan.com/address/0xcBBC42c3b6198dd3856B77e92a69Adac81abCF5a",
+  "CONTRACT_ADDRESS": "0x9A303054C302B180772a96caded9858C7ab92e99",
+  "SCAN_LINK": "https://sonicscan.org/address/0x9a303054c302b180772a96caded9858c7ab92e99",
   "NETWORK": {
-    "NAME": "Fantom",
-    "SYMBOL": "FTM",
-    "ID": 250
+    "NAME": "Sonic Mainnet",
+    "SYMBOL": "S",
+    "ID": 146
   },
-  "NFT_NAME": "test",
-  "SYMBOL": "test",
+  "NFT_NAME": "JointPacks",
+  "SYMBOL": "Packs",
   "GAS_LIMIT": 1000000,
   "MARKETPLACE": "Paintswap",
   "MARKETPLACE_LINK": "https://paintswap.finance/marketplace",

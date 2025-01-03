@@ -20,31 +20,10 @@
 				"internalType": "address",
 				"name": "_rewardToken",
 				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_vrfCoordinator",
-				"type": "address"
 			}
 		],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "have",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "want",
-				"type": "address"
-			}
-		],
-		"name": "OnlyCoordinatorCanFulfill",
-		"type": "error"
 	},
 	{
 		"anonymous": false,
@@ -132,7 +111,7 @@
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "requestId",
+				"name": "randomValue",
 				"type": "uint256"
 			}
 		],
@@ -193,24 +172,6 @@
 			}
 		],
 		"name": "pause",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "requestId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "randomWords",
-				"type": "uint256[]"
-			}
-		],
-		"name": "rawFulfillRandomWords",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -358,38 +319,12 @@
 	{
 		"inputs": [
 			{
-				"internalType": "bytes32",
-				"name": "newKeyHash",
-				"type": "bytes32"
-			}
-		],
-		"name": "setKeyHash",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "uint16",
 				"name": "_limit",
 				"type": "uint16"
 			}
 		],
 		"name": "setNftPerAddressLimit",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint64",
-				"name": "subscriptionId",
-				"type": "uint64"
-			}
-		],
-		"name": "setSubscriptionId",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
