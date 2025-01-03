@@ -263,10 +263,10 @@ function App() {
           <a href="https://paintswap.finance/marketplace/fantom/collections/%24joint-packs" target="_blank" rel="noopener noreferrer">
             <img src={paintswapImage} alt="PaintSwap" />
           </a>
-          <a href="https://x.com/PassTheJointFTM" target="_blank" rel="noopener noreferrer">
+          <a href="https://x.com/PassThe_JOINT" target="_blank" rel="noopener noreferrer">
             <img src={twitterImage} alt="Twitter" />
           </a>
-          <a href="https://t.me/PASSTHEJOINTFTM/" target="_blank" rel="noopener noreferrer">
+          <a href="https://t.me/jointonsonic" target="_blank" rel="noopener noreferrer">
             <img src={telegramImage} alt="Telegram" />
           </a>
           <a href="https://passthejoint.netlify.app/" target="_blank" rel="noopener noreferrer">
