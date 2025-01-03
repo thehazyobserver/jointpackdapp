@@ -260,7 +260,7 @@ function App() {
         )}
 
         <ButtonContainer>
-          <a href="https://paintswap.finance/marketplace/fantom/collections/%24joint-packs" target="_blank" rel="noopener noreferrer">
+          <a href="https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings" target="_blank" rel="noopener noreferrer">
             <img src={paintswapImage} alt="PaintSwap" />
           </a>
           <a href="https://x.com/PassThe_JOINT" target="_blank" rel="noopener noreferrer">
