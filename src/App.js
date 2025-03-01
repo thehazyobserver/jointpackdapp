@@ -115,7 +115,7 @@ const NFTGrid = styled.div`
   display: grid;
   /* Each column is at least 220px wide, or expands to fill space */
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 40px;
+  gap: 25px;
   justify-items: center;
   margin-bottom: 20px;
   padding: 20px;
