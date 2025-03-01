@@ -165,6 +165,7 @@ const NFTText = styled(s.TextDescription)`
   display: block;
   width: 100%;
   margin-top: 10px; /* Added margin-top for spacing */
+  font-weight: bold;
 `;
 
 const NFTButtonContainer = styled.div`
