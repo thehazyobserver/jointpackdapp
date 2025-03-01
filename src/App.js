@@ -137,7 +137,7 @@ const NFTBox = styled.div`
   /* Center items in a column, distribute space between top & bottom */
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 
   background-color: #fff;
