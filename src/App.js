@@ -320,7 +320,7 @@ function App() {
   // Open LootBox
   const openLootBox = async (tokenId) => {
     try {
-      setRewardMessage(`Opening LootBox #${tokenId}...`);
+      setRewardMessage(`OPENING $JOINT PACK #${tokenId}...`);
 
       const tx = await blockchain.LootBoxNFT.methods
         .openLootBox(tokenId)
@@ -342,14 +342,14 @@ function App() {
       }
 
       setRewardMessage(
-        `LootBox #${tokenId} opened successfully. Waiting for reward...`
+        `$JOINT PACK #${tokenId} OPENED SUCCESSFULLY. WAITING FOR REWARD....`
       );
 
       // Poll for RewardClaimed event
       pollForRewardClaimed(tokenId, fromBlock);
     } catch (error) {
       console.error("Error opening lootbox:", error);
-      setRewardMessage("Failed to open LootBox. Check console for details.");
+      setRewardMessage("FAILED TO OPEN $JOINTPACK. CONTACT $JOINT");
     }
   };
 
@@ -422,7 +422,7 @@ function App() {
                 marginBottom: "10px", // Adjusted margin-bottom for spacing
               }}
             >
-              Your $Joint Packs
+              YOUR $JOINT PACKS
             </s.TextTitle>
             <s.TextSubTitle
               style={{
@@ -434,7 +434,7 @@ function App() {
                 marginBottom: "20px", // Added margin-bottom for spacing
               }}
             >
-              Open to receive 20,000 to 1 MILLION $JOINT
+              OPEN TO RECEIVE 20,000 TO 1 MILLION $JOINT
             </s.TextSubTitle>
             <MoreJointPacksButton 
               onClick={() => window.open("https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings", "_blank")}
@@ -484,7 +484,7 @@ function App() {
                   marginTop: "20px", // Added margin-top for spacing
                 }}
               >
-                No $JOINT Packs found.
+                NO $JOINT PACKS FOUND. GET MORE $JOINT PACKS.
               </s.TextDescription>
             )}
           </>
@@ -497,7 +497,7 @@ function App() {
               marginTop: "20px", // Added margin-top for spacing
             }}
           >
-            Please connect your wallet to view your $JOINT PACKs.
+            PLEASE CONNECT YOUR WALLET TO VIEW YOUR $JOINT PACKS.
           </s.TextDescription>
         )}
       </MainContent>
