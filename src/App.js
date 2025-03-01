@@ -58,7 +58,7 @@ const StyledButton = styled.button`
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #0059d7;
+  background-color: #282c34;
   font-weight: bold;
   color: white;
   cursor: pointer;
