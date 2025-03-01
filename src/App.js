@@ -4,7 +4,7 @@ import { connect } from "./redux/blockchain/blockchainActions";
 import { initializeContract, fetchData } from "./redux/data/dataActions";
 import * as s from "./styles/globalStyles"; // if you have global styled stuff
 import styled from "styled-components";
-import { Screen } from "./styles/globalStyles";
+// import { Screen } from "./styles/globalStyles";
 
 // Images
 import defaultImage from "./assets/images/JOINTPACK.jpg";
