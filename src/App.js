@@ -63,9 +63,8 @@ const StyledButton = styled.button`
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-right: 20px;
 
-  :hover {
+  &:hover {
     background-color: #21a1f1;
   }
 `;
@@ -137,7 +136,7 @@ const NFTBox = styled.div`
   /* Center items in a column, distribute space between top & bottom */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 
   background-color: #fff;
