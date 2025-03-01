@@ -160,6 +160,20 @@ const NFTImage = styled.img`
   border-radius: 4px; /* optional: round image corners */
 `;
 
+const NFTText = styled(s.TextDescription)`
+  text-align: center;
+  display: block;
+  width: 100%;
+  margin-top: 10px; /* Added margin-top for spacing */
+`;
+
+const NFTButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 5px;
+`;
+
 /* Container for a full-page background image (if not using s.Screen)
 const BackgroundWrapper = styled.div`
   width: 100%;
