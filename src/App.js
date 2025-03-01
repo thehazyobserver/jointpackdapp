@@ -26,7 +26,7 @@ const Header = styled.header`
   top: 0;
   left: 0;
   width: 100%;
-  background-color: #282c34;
+  background-color: #121212;
   display: flex;
   flex-wrap: wrap; /* allow wrapping if needed */
   align-items: center;
@@ -58,7 +58,7 @@ const StyledButton = styled.button`
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #282c34;
+  background-color: #121212;
   font-weight: bold;
   color: white;
   cursor: pointer;
@@ -82,7 +82,7 @@ const ConnectWalletButton = styled.button`
   margin-right: 20px;
 
   :hover {
-    background-color: rgb(0, 74, 177); /* Change the hover color here */
+    background-color: #0059d7; /* Change the hover color here */
   }
 `;
 
@@ -90,7 +90,7 @@ const MoreJointPacksButton = styled.button`
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #282c34; /* Change the button color here */
+  background-color: #121212; /* Change the button color here */
   font-weight: bold;
   color: white;
   cursor: pointer;
