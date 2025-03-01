@@ -439,7 +439,7 @@ function App() {
             <MoreJointPacksButton 
               onClick={() => window.open("https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings", "_blank")}
             >
-              Get more $JOINT PACKS
+              GET MORE $JOINT PACKS
             </MoreJointPacksButton>
             {rewardMessage && (
               <s.TextDescription
@@ -465,7 +465,7 @@ function App() {
         onClick={() => setSelectedToken(tokenId)}
       />
       <NFTText>
-        {`Token ID: ${tokenId}`}
+        {`$JOINT PACK #${tokenId}`}
       </NFTText>
       <NFTButtonContainer>
         <StyledButton onClick={() => openLootBox(tokenId)}>
