@@ -402,6 +402,7 @@ function App() {
                 fontSize: 40,
                 fontWeight: "bold",
                 color: "white",
+                marginBotton: "10px",
               }}
             >
               Your $Joint Packs
@@ -412,6 +413,7 @@ function App() {
                 fontSize: 18,
                 fontWeight: "bold",
                 color: "white",
+                marginTop: "0px",
               }}
             >
               Open to receive 20,000 to 1 MILLION $JOINT
