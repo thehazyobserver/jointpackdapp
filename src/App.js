@@ -136,7 +136,7 @@ const NFTBox = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  background-color: #0059d7;
+  background-color: #fff;
   text-align: center;
   border: 1px solid #ccc;      /* softer border */
   border-radius: 8px;         /* rounded corners */
