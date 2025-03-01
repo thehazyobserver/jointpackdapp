@@ -99,8 +99,9 @@ const MoreJointPacksButton = styled.button`
   margin-right: 20px;
   font-size: 16px; 
 
-  :hover {
-    background-color: rgb(0, 74, 177); /* Change the hover color here */
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
 `;
 
