@@ -58,7 +58,7 @@ export const connect = (CONFIG) => {
       console.error("MetaMask or other Web3 wallet not detected.");
       dispatch({
         type: CONNECT_FAILED,
-        payload: "PLEASE INSTALL A WEB 3 WALLET LIKE RABBY",
+        payload: "PLEASE INSTALL A WEB3 WALLET LIKE RABBY",
       });
     }
   };
