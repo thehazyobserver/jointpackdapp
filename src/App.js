@@ -165,7 +165,6 @@ const NFTImage = styled.img`
 const NFTText = styled(s.TextDescription)`
   text-align: center;
   display: block;
-  width: 100%;
   margin-top: 10px; /* Added margin-top for spacing */
   font-weight: bold;
 `;
@@ -173,7 +172,6 @@ const NFTText = styled(s.TextDescription)`
 const NFTButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  width: 100%;
   margin-top: 5px;
   align-items: center;
 `;
