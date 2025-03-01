@@ -58,7 +58,7 @@ const StyledButton = styled.button`
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #0059d7;
+  background-color: #646464;
   font-weight: bold;
   color: white;
   cursor: pointer;
@@ -90,9 +90,9 @@ const MoreJointPacksButton = styled.button`
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #ffffff; /* Change the button color here */
+  background-color: #646464; /* Change the button color here */
   font-weight: bold;
-  color: #0059d7;
+  color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-top: 10px; /* Added margin-top for spacing */
