@@ -421,23 +421,31 @@ function App() {
             )}
             {data.nfts && data.nfts.length > 0 ? (
               <NFTGrid>
-                {data.nfts.map(({ tokenId, image }) => (
-                  <NFTBox key={tokenId}>
-                    <NFTImage
-                      src={image || defaultImage}
-                      alt={`LootBox ${tokenId}`}
-                      selected={selectedToken === tokenId}
-                      onClick={() => setSelectedToken(tokenId)}
-                    />
-                    <s.TextDescription style={{ textAlign: "center" }}>
-                      {`Token ID: ${tokenId}`}
-                    </s.TextDescription>
-                    <StyledButton onClick={() => openLootBox(tokenId)}>
-                      Open LootBox
-                    </StyledButton>
-                  </NFTBox>
-                ))}
-              </NFTGrid>
+  {data.nfts.map(({ tokenId, image }) => (
+    <NFTBox key={tokenId}>
+      <NFTImage
+        src={image || defaultImage}
+        alt={`LootBox ${tokenId}`}
+        selected={selectedToken === tokenId}
+        onClick={() => setSelectedToken(tokenId)}
+      />
+   <s.TextDescription
+  style={{
+    textAlign: "center",
+    display: "block",
+    width: "100%"
+  }}
+>
+  {`Token ID: ${tokenId}`}
+</s.TextDescription>
+      <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+        <StyledButton onClick={() => openLootBox(tokenId)}>
+          Open LootBox
+        </StyledButton>
+      </div>
+    </NFTBox>
+  ))}
+</NFTGrid>
             ) : (
               <s.TextDescription
                 style={{
