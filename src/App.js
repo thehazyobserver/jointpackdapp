@@ -296,10 +296,10 @@ function App() {
         if (events.length > 0) {
           const { amount } = events[0].returnValues;
           setRewardMessage(
-            `You have received ${blockchain.web3.utils.fromWei(
+            `YOU HAVE RECEIVED ${blockchain.web3.utils.fromWei(
               amount,
               "ether"
-            )} $JOINT from $JOINT PACK #${tokenId}. The $JOINT PACK is now burnt.`
+            )} $JOINT FROM $JOINT PACK #${tokenId}. THE $JOINT PACK IS NOW BURNT.`
           );
           dispatch(fetchData());
         } else if (Date.now() - startTime < pollTimeout) {
@@ -438,6 +438,18 @@ function App() {
               }}
             >
               OPEN TO RECEIVE 20,000 TO 1 MILLION $JOINT
+            </s.TextSubTitle>
+            <s.TextSubTitle
+              style={{
+                textAlign: "center",
+                fontSize: 18,
+                fontWeight: "bold",
+                color: "white",
+                marginTop: "0px",
+                marginBottom: "20px", // Added margin-bottom for spacing
+              }}
+            >
+              PACKS CONTAIN AN AVERAGE 86,800 $JOINT
             </s.TextSubTitle>
             <MoreJointPacksButton 
               onClick={() => window.open("https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings", "_blank")}
