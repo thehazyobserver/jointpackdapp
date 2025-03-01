@@ -391,8 +391,8 @@ function App() {
 
         <ConnectWalletButton onClick={handleConnectWallet} disabled={!configLoaded}>
           {blockchain.account
-            ? `Connected: ${truncate(blockchain.account, 15)}`
-            : "Connect Wallet"}
+            ? `CONNECTED: ${truncate(blockchain.account, 15)}`
+            : "CONNECT WALLET"}
         </ConnectWalletButton>
       </Header>
 
@@ -469,7 +469,7 @@ function App() {
       </NFTText>
       <NFTButtonContainer>
         <StyledButton onClick={() => openLootBox(tokenId)}>
-          Open LootBox
+          OPEN $JOINT PACK
         </StyledButton>
       </NFTButtonContainer>
     </NFTBox>
