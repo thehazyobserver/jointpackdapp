@@ -137,7 +137,7 @@ const NFTBox = styled.div`
   /* Center items in a column, distribute space between top & bottom */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 
   background-color: #fff;
@@ -165,6 +165,7 @@ const NFTImage = styled.img`
 const NFTText = styled(s.TextDescription)`
   text-align: center;
   display: block;
+  width: 100%;
   margin-top: 10px; /* Added margin-top for spacing */
   font-weight: bold;
 `;
@@ -172,8 +173,8 @@ const NFTText = styled(s.TextDescription)`
 const NFTButtonContainer = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: 5px;
-  align-items: center;
+  width: 100%;
+  margin-top: 10px; /* Added margin-top for spacing */
 `;
 
 /* Container for a full-page background image (if not using s.Screen)
