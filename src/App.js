@@ -58,7 +58,7 @@ const StyledButton = styled.button`
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #121212;
+  background-color: #0059d7;
   font-weight: bold;
   color: white;
   cursor: pointer;
@@ -95,8 +95,9 @@ const MoreJointPacksButton = styled.button`
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-top: 20px; /* Added margin-top for spacing */
+  margin-top: 10px; /* Added margin-top for spacing */
   margin-right: 20px;
+  font-size: 16px; 
 
   :hover {
     background-color: rgb(0, 74, 177); /* Change the hover color here */
