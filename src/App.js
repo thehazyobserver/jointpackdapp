@@ -82,7 +82,7 @@ const ConnectWalletButton = styled.button`
   margin-right: 20px;
 
   :hover {
-    background-color:rgb(0, 74, 177); /* Change the hover color here */
+    background-color: rgb(0, 74, 177); /* Change the hover color here */
   }
 `;
 
@@ -95,12 +95,14 @@ const MoreJointPacksButton = styled.button`
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 20px; /* Added margin-top for spacing */
   margin-right: 20px;
 
   :hover {
-    background-color:rgb(0, 74, 177); /* Change the hover color here */
+    background-color: rgb(0, 74, 177); /* Change the hover color here */
   }
 `;
+
 // Main content container (pushed down by fixed header)
 const MainContent = styled.div`
   width: 100%;
@@ -115,7 +117,7 @@ const NFTGrid = styled.div`
   display: grid;
   /* Each column is at least 220px wide, or expands to fill space */
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 25px;
+  gap: 25px; /* Adjusted gap for spacing between NFT boxes */
   justify-items: center;
   margin-bottom: 20px;
   padding: 20px;
@@ -138,8 +140,8 @@ const NFTBox = styled.div`
 
   background-color: #fff;
   text-align: center;
-  border: 1px solid #ccc;      /* softer border */
-  border-radius: 8px;         /* rounded corners */
+  border: 1px solid #ccc; /* softer border */
+  border-radius: 8px; /* rounded corners */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 
@@ -388,6 +390,7 @@ function App() {
               textAlign: "center",
               fontSize: 20,
               color: "white",
+              marginBottom: "20px", // Added margin-bottom for spacing
             }}
           >
             {blockchain.errorMsg}
@@ -402,7 +405,7 @@ function App() {
                 fontSize: 40,
                 fontWeight: "bold",
                 color: "white",
-                marginBotton: "10px",
+                marginBottom: "10px", // Adjusted margin-bottom for spacing
               }}
             >
               Your $Joint Packs
@@ -414,13 +417,13 @@ function App() {
                 fontWeight: "bold",
                 color: "white",
                 marginTop: "0px",
+                marginBottom: "20px", // Added margin-bottom for spacing
               }}
             >
               Open to receive 20,000 to 1 MILLION $JOINT
             </s.TextSubTitle>
             <MoreJointPacksButton 
               onClick={() => window.open("https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings", "_blank")}
-              style={{ marginTop: "20px" }}
             >
               Get more $JOINT PACKS
             </MoreJointPacksButton>
@@ -431,6 +434,7 @@ function App() {
                   fontSize: 20,
                   fontWeight: "bold",
                   color: "white",
+                  marginTop: "20px", // Added margin-top for spacing
                 }}
               >
                 {rewardMessage}
@@ -438,43 +442,44 @@ function App() {
             )}
             {data.nfts && data.nfts.length > 0 ? (
               <NFTGrid>
-  {data.nfts.map(({ tokenId, image }) => (
-    <NFTBox key={tokenId}>
-      <NFTImage
-        src={image || defaultImage}
-        alt={`LootBox ${tokenId}`}
-        selected={selectedToken === tokenId}
-        onClick={() => setSelectedToken(tokenId)}
-      />
-   <s.TextDescription
-  style={{
-    textAlign: "center",
-    display: "block",
-    width: "100%"
-  }}
->
-  {`Token ID: ${tokenId}`}
-</s.TextDescription>
-      <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-        <StyledButton onClick={() => openLootBox(tokenId)}>
-          Open LootBox
-        </StyledButton>
-      </div>
-    </NFTBox>
-  ))}
-</NFTGrid>
+                {data.nfts.map(({ tokenId, image }) => (
+                  <NFTBox key={tokenId}>
+                    <NFTImage
+                      src={image || defaultImage}
+                      alt={`LootBox ${tokenId}`}
+                      selected={selectedToken === tokenId}
+                      onClick={() => setSelectedToken(tokenId)}
+                    />
+                    <s.TextDescription
+                      style={{
+                        textAlign: "center",
+                        display: "block",
+                        width: "100%",
+                        marginTop: "10px", // Added margin-top for spacing
+                      }}
+                    >
+                      {`Token ID: ${tokenId}`}
+                    </s.TextDescription>
+                    <div style={{ display: "flex", justifyContent: "center", width: "100%", marginTop: "10px" }}>
+                      <StyledButton onClick={() => openLootBox(tokenId)}>
+                        Open LootBox
+                      </StyledButton>
+                    </div>
+                  </NFTBox>
+                ))}
+              </NFTGrid>
             ) : (
               <s.TextDescription
                 style={{
                   textAlign: "center",
                   fontSize: 20,
                   color: "white",
+                  marginTop: "20px", // Added margin-top for spacing
                 }}
               >
                 No $JOINT Packs found.
               </s.TextDescription>
             )}
-
           </>
         ) : (
           <s.TextDescription
@@ -482,6 +487,7 @@ function App() {
               textAlign: "center",
               fontSize: 20,
               color: "white",
+              marginTop: "20px", // Added margin-top for spacing
             }}
           >
             Please connect your wallet to view your $JOINT PACKs.
