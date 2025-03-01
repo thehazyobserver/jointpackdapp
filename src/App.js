@@ -1,85 +1,163 @@
-// App.js
 import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
 import { initializeContract, fetchData } from "./redux/data/dataActions";
-import * as s from "./styles/globalStyles";
+import * as s from "./styles/globalStyles"; // if you have global styled stuff
 import styled from "styled-components";
-import defaultImage from "./assets/images/JOINTPACK.jpg"; // Re-import the default image
-import passTheJointImage from "./assets/images/PassTheJoint.gif"; // Import the new image
-import paintswapImage from "./assets/images/paintswap.svg"; // Import the paintswap image
-import telegramImage from "./assets/images/telegram.png"; // Import the telegram image
-import twitterImage from "./assets/images/x.png"; // Import the twitter image
+import { Screen } from "./styles/globalStyles";
 
-// Utility Functions
+// Images
+import defaultImage from "./assets/images/JOINTPACK.jpg";
+import passTheJointImage from "./assets/images/PassTheJoint.gif";
+import paintswapImage from "./assets/images/paintswap.png";
+import telegramImage from "./assets/images/telegram.png";
+import twitterImage from "./assets/images/x.png";
+import bgImage from "./assets/images/bg.png"; // Adjust path if needed
+
+// Utility function
 const truncate = (input, len) =>
   input.length > len ? `${input.substring(0, len)}...` : input;
 
-// Styled Components
-const NFTGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 20px;
-  justify-items: center;
-  margin-bottom: 20px;
-`;
+/* ------------------ Styled Components ------------------ */
 
-const NFTBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+// Fixed (sticky) header
+const Header = styled.header`
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 150px;
-  height: 200px;
-  margin: 5px;
-  border: 5px solid black; /* Change border color to black */
-  background-color: white; /* Change background color to white */
-  text-align: center;
-`;
-
-const NFTImage = styled.img`
-  width: 100px;
-  height: 100px;
-  margin-bottom: 10px;
-`;
-
-const StyledButton = styled.button`
-  padding: 10px;
-  border-radius: 0; /* Make the button rectangular */
-  border: none;
-  background-color: black; /* Make the button black */
-  font-weight: bold;
-  color: white; /* Font color white */
-  width: 100%; /* Make the button the width of the box */
-  cursor: pointer;
-  text-align: center;
-
-  :hover {
-    background-color: #444; /* Darker shade on hover */
-  }
-`;
-
-const ButtonContainer = styled.div`
+  background-color: #282c34;
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
+  flex-wrap: wrap; /* allow wrapping if needed */
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  z-index: 999; /* keep above other elements */
+`;
+
+const LinksContainer = styled.div`
+  display: flex;
+  align-items: center;
 
   a {
-    margin: 10px;
+    margin: 0 10px;
   }
 
   img {
     width: 40px;
     height: 40px;
+    transition: transform 0.3s ease;
+  }
+
+  img:hover {
+    transform: scale(1.1);
   }
 `;
+
+const StyledButton = styled.button`
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #282c34;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 20px;
+
+  :hover {
+    background-color: #21a1f1;
+  }
+`;
+
+const ConnectWalletButton = styled.button`
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #0059d7; /* Change the button color here */
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 20px;
+
+  :hover {
+    background-color:rgb(0, 74, 177); /* Change the hover color here */
+  }
+`;
+
+// Main content container (pushed down by fixed header)
+const MainContent = styled.div`
+  width: 100%;
+  padding-top: 80px; /* space for the fixed header's height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+/* -------- NFT Grid & Card Styles -------- */
+const NFTGrid = styled.div`
+  display: grid;
+  /* Each column is at least 220px wide, or expands to fill space */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  width: 100%;
+`;
+
+const NFTBox = styled.div`
+  /* Use a fixed card size so the image can dominate */
+  width: 220px;
+  height: 300px;
+  margin: 10px;
+  padding: 16px;
+
+  /* Center items in a column, distribute space between top & bottom */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: #fff;
+  text-align: center;
+  border: 1px solid #ccc;      /* softer border */
+  border-radius: 8px;         /* rounded corners */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+`;
+
+const NFTImage = styled.img`
+  /* Let the image fill most of the card’s width, 
+     maintaining aspect ratio */
+  width: 100%;
+  max-height: 70%;
+  object-fit: cover;
+  border-radius: 4px; /* optional: round image corners */
+`;
+
+/* Container for a full-page background image (if not using s.Screen)
+const BackgroundWrapper = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  background: url(${bgImage}) no-repeat center center;
+  background-size: cover;
+`; */
+
+/* ------------------ Main App Component ------------------ */
 
 function App() {
   const dispatch = useDispatch();
   const blockchain = useSelector((state) => state.blockchain);
   const data = useSelector((state) => state.data);
+
   const [selectedToken, setSelectedToken] = useState(null);
   const [rewardMessage, setRewardMessage] = useState("");
   const [configLoaded, setConfigLoaded] = useState(false);
@@ -156,7 +234,7 @@ function App() {
       window.ethereum.on("accountsChanged", handleAccountsChanged);
       window.ethereum.on("chainChanged", handleChainChanged);
 
-      // Cleanup function
+      // Cleanup
       return () => {
         window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
         window.ethereum.removeListener("chainChanged", handleChainChanged);
@@ -172,26 +250,36 @@ function App() {
 
     const poll = async () => {
       try {
-        const events = await blockchain.LootBoxNFT.getPastEvents('RewardClaimed', {
-          filter: { user: blockchain.account, tokenId: tokenId },
-          fromBlock: fromBlock,
-          toBlock: 'latest',
-        });
+        const events = await blockchain.LootBoxNFT.getPastEvents(
+          "RewardClaimed",
+          {
+            filter: { user: blockchain.account, tokenId: tokenId },
+            fromBlock: fromBlock,
+            toBlock: "latest",
+          }
+        );
 
         if (events.length > 0) {
           const { amount } = events[0].returnValues;
           setRewardMessage(
-            `You have received ${blockchain.web3.utils.fromWei(amount, 'ether')} $JOINT from $JOINT PACK #${tokenId}. The $JOINT PACK is now burnt.`
+            `You have received ${blockchain.web3.utils.fromWei(
+              amount,
+              "ether"
+            )} $JOINT from $JOINT PACK #${tokenId}. The $JOINT PACK is now burnt.`
           );
           dispatch(fetchData());
         } else if (Date.now() - startTime < pollTimeout) {
           setTimeout(poll, pollInterval);
         } else {
-          setRewardMessage('Reward not received within the expected time. Please check your wallet later.');
+          setRewardMessage(
+            "Reward not received within the expected time. Please check your wallet later."
+          );
         }
       } catch (error) {
-        console.error('Error polling for RewardClaimed event:', error);
-        setRewardMessage('An error occurred while fetching your reward. Please check your wallet later.');
+        console.error("Error polling for RewardClaimed event:", error);
+        setRewardMessage(
+          "An error occurred while fetching your reward. Please check your wallet later."
+        );
       }
     };
 
@@ -207,17 +295,18 @@ function App() {
         .openLootBox(tokenId)
         .send({ from: blockchain.account, gas: CONFIG.GAS_LIMIT });
 
-      console.log('Transaction Receipt:', tx);
+      console.log("Transaction Receipt:", tx);
 
       const transactionHash = tx.transactionHash;
-
       let fromBlock;
 
       if (tx.blockNumber) {
         fromBlock = tx.blockNumber;
       } else {
-        // Fetch the transaction receipt if blockNumber is not present
-        const txReceipt = await blockchain.web3.eth.getTransactionReceipt(transactionHash);
+        // If blockNumber not present, fetch receipt
+        const txReceipt = await blockchain.web3.eth.getTransactionReceipt(
+          transactionHash
+        );
         fromBlock = txReceipt.blockNumber;
       }
 
@@ -228,51 +317,67 @@ function App() {
       // Poll for RewardClaimed event
       pollForRewardClaimed(tokenId, fromBlock);
     } catch (error) {
-      console.error('Error opening lootbox:', error);
-      setRewardMessage('Failed to open LootBox. Check console for details.');
+      console.error("Error opening lootbox:", error);
+      setRewardMessage("Failed to open LootBox. Check console for details.");
     }
   };
 
   return (
-    <s.Screen>
-      <s.Container
-        flex={1}
-        ai={"center"}
-        style={{ padding: 24, backgroundColor: "var(--primary)" }}
-        image={CONFIG.SHOW_BACKGROUND ? "/config/images/bg.png" : null}
-      >
-        <StyledButton onClick={handleConnectWallet} disabled={!configLoaded}>
+    // <s.Screen> already supports a background image
+    <s.Screen image={bgImage}>
+      {/* HEADER */}
+      <Header>
+        <LinksContainer>
+          <a
+            href="https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src={paintswapImage} alt="PaintSwap" />
+          </a>
+          <a
+            href="https://x.com/PassThe_JOINT"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src={twitterImage} alt="Twitter" />
+          </a>
+          <a
+            href="https://t.me/jointonsonic"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src={telegramImage} alt="Telegram" />
+          </a>
+          <a
+            href="https://passthejoint.netlify.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src={passTheJointImage} alt="Pass the $JOINT" />
+          </a>
+        </LinksContainer>
+
+        <ConnectWalletButton onClick={handleConnectWallet} disabled={!configLoaded}>
           {blockchain.account
             ? `Connected: ${truncate(blockchain.account, 15)}`
             : "Connect Wallet"}
-        </StyledButton>
+        </ConnectWalletButton>
+      </Header>
 
+      {/* MAIN CONTENT */}
+      <MainContent>
         {blockchain.errorMsg !== "" && (
           <s.TextDescription
             style={{
               textAlign: "center",
               fontSize: 20,
-              color: "var(--accent-text)",
+              color: "white",
             }}
           >
             {blockchain.errorMsg}
           </s.TextDescription>
         )}
-
-        <ButtonContainer>
-          <a href="https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings" target="_blank" rel="noopener noreferrer">
-            <img src={paintswapImage} alt="PaintSwap" />
-          </a>
-          <a href="https://x.com/PassThe_JOINT" target="_blank" rel="noopener noreferrer">
-            <img src={twitterImage} alt="Twitter" />
-          </a>
-          <a href="https://t.me/jointonsonic" target="_blank" rel="noopener noreferrer">
-            <img src={telegramImage} alt="Telegram" />
-          </a>
-          <a href="https://passthejoint.netlify.app/" target="_blank" rel="noopener noreferrer">
-            <img src={passTheJointImage} alt="Pass the $JOINT" />
-          </a>
-        </ButtonContainer>
 
         {blockchain.account && blockchain.LootBoxNFT ? (
           <>
@@ -281,17 +386,45 @@ function App() {
                 textAlign: "center",
                 fontSize: 40,
                 fontWeight: "bold",
-                color: "var(--accent-text)",
+                color: "white",
               }}
             >
               Your $Joint Packs
             </s.TextTitle>
+            <s.TextSubTitle
+              style={{
+                textAlign: "center",
+                fontSize: 18,
+                fontWeight: "bold",
+                color: "white",
+              }}
+            >
+              Open to receive 20,000 to 1 MILLION $JOINT
+            </s.TextSubTitle>
+            <StyledButton
+              onClick={() => window.open("https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings", "_blank")}
+              style={{ marginTop: "20px" }}
+            >
+              Get more $JOINT PACKS
+            </StyledButton>
+            {rewardMessage && (
+              <s.TextDescription
+                style={{
+                  textAlign: "center",
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "white",
+                }}
+              >
+                {rewardMessage}
+              </s.TextDescription>
+            )}
             {data.nfts && data.nfts.length > 0 ? (
               <NFTGrid>
                 {data.nfts.map(({ tokenId, image }) => (
                   <NFTBox key={tokenId}>
                     <NFTImage
-                      src={image || defaultImage} // Use defaultImage if image is not provided
+                      src={image || defaultImage}
                       alt={`LootBox ${tokenId}`}
                       selected={selectedToken === tokenId}
                       onClick={() => setSelectedToken(tokenId)}
@@ -310,37 +443,26 @@ function App() {
                 style={{
                   textAlign: "center",
                   fontSize: 20,
-                  color: "var(--accent-text)",
+                  color: "white",
                 }}
               >
                 No $JOINT Packs found.
               </s.TextDescription>
             )}
-            {rewardMessage && (
-              <s.TextDescription
-                style={{
-                  textAlign: "center",
-                  fontSize: 20,
-                  fontWeight: "bold",
-                  color: "var(--accent-text)",
-                }}
-              >
-                {rewardMessage}
-              </s.TextDescription>
-            )}
+
           </>
         ) : (
           <s.TextDescription
             style={{
               textAlign: "center",
               fontSize: 20,
-              color: "var(--accent-text)",
+              color: "white",
             }}
           >
             Please connect your wallet to view your $JOINT PACKs.
           </s.TextDescription>
         )}
-      </s.Container>
+      </MainContent>
     </s.Screen>
   );
 }
