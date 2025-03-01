@@ -58,7 +58,7 @@ const StyledButton = styled.button`
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #282c34;
+  background-color: #0059d7;
   font-weight: bold;
   color: white;
   cursor: pointer;
@@ -86,6 +86,21 @@ const ConnectWalletButton = styled.button`
   }
 `;
 
+const MoreJointPacksButton = styled.button`
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #282c34; /* Change the button color here */
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 20px;
+
+  :hover {
+    background-color:rgb(0, 74, 177); /* Change the hover color here */
+  }
+`;
 // Main content container (pushed down by fixed header)
 const MainContent = styled.div`
   width: 100%;
@@ -121,7 +136,7 @@ const NFTBox = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  background-color: #fff;
+  background-color: #0059d7;
   text-align: center;
   border: 1px solid #ccc;      /* softer border */
   border-radius: 8px;         /* rounded corners */
@@ -401,12 +416,12 @@ function App() {
             >
               Open to receive 20,000 to 1 MILLION $JOINT
             </s.TextSubTitle>
-            <StyledButton
+            <MoreJointPacksButton 
               onClick={() => window.open("https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings", "_blank")}
               style={{ marginTop: "20px" }}
             >
               Get more $JOINT PACKS
-            </StyledButton>
+            </MoreJointPacksButton>
             {rewardMessage && (
               <s.TextDescription
                 style={{
