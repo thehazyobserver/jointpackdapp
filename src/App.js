@@ -499,7 +499,7 @@ function App() {
                   marginTop: "20px", // Added margin-top for spacing
                 }}
               >
-                NO $JOINT PACKS FOUND. GET MORE $JOINT PACKS.
+                NO $JOINT PACKS FOUND. DON'T STOP THE PARTY! GET MORE $JOINT PACKS.
               </s.TextDescription>
             )}
           </>
