@@ -174,7 +174,7 @@ const NFTButtonContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-top: 10px; /* Added margin-top for spacing */
+  margin-top: 5px; /* Added margin-top for spacing */
 `;
 
 /* Container for a full-page background image (if not using s.Screen)
