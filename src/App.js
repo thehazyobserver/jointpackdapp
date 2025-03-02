@@ -107,7 +107,7 @@ const MoreJointPacksButton = styled.button`
 // Main content container (pushed down by fixed header)
 const MainContent = styled.div`
   width: 100%;
-  padding-top: 80px; /* space for the fixed header's height */
+  padding-top: 60px; /* space for the fixed header's height */
   display: flex;
   flex-direction: column;
   align-items: center;
