@@ -509,7 +509,7 @@ function App() {
               textAlign: "center",
               fontSize: 20,
               color: "white",
-              marginTop: "20px", // Added margin-top for spacing
+              marginTop: "40px", // Added margin-top for spacing
             }}
           >
             PLEASE CONNECT YOUR WALLET TO VIEW YOUR $JOINT PACKS.
