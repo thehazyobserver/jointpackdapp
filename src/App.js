@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
 import { initializeContract, fetchData } from "./redux/data/dataActions";
@@ -235,15 +235,15 @@ function App() {
   
   // Connect Wallet Handler
   const handleConnectWallet = () => {
-    if (configLoaded) {
-      dispatch(connect(CONFIG));
-    } else {
-      console.error("Config not loaded yet.");
+    if (!configLoaded || !CONFIG.CONTRACT_ADDRESS) {
+      console.error("Config not loaded or missing contract address.");
+      return;
     }
+    dispatch(connect(CONFIG));
   };
 
   // Fetch total rewards received by the connected wallet
-  const fetchTotalRewards = useCallback(debounce(async (account) => {
+  const fetchTotalRewards = useRef(debounce(async (account) => {
     if (!blockchain.LootBoxNFT) {
       console.error("LootBoxNFT contract is not initialized.");
       return;
@@ -264,7 +264,7 @@ function App() {
     } catch (error) {
       console.error("Error fetching total rewards:", error);
     }
-  }, 300), [blockchain.LootBoxNFT, blockchain.web3]);
+  }, 300)).current;
 
   // Initialize contract when account and web3 are available
   useEffect(() => {
@@ -276,8 +276,8 @@ function App() {
         console.error("Error initializing LootBoxNFT contract:", error);
       }
     }
-  }, [blockchain.account, blockchain.web3, CONFIG.CONTRACT_ADDRESS, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
-  
+  }, [blockchain.account, blockchain.web3, CONFIG.CONTRACT_ADDRESS, blockchain.LootBoxNFT, dispatch]);
+
   // Fetch data when contract is initialized
   useEffect(() => {
     if (blockchain.account && blockchain.LootBoxNFT) {
@@ -317,47 +317,34 @@ function App() {
 
   // Poll for RewardClaimed event
   const pollForRewardClaimed = async (tokenId, fromBlock) => {
-    const pollInterval = 2000; // Poll every 2 seconds
-    const pollTimeout = 60000; // Timeout after 60 seconds
+    const pollInterval = 2000; // 2 seconds
+    const pollTimeout = 60000; // 1 minute
     const startTime = Date.now();
 
-    const poll = async () => {
+    const interval = setInterval(async () => {
       try {
-        const events = await blockchain.LootBoxNFT.getPastEvents(
-          "RewardClaimed",
-          {
-            filter: { user: blockchain.account, tokenId: tokenId },
-            fromBlock: fromBlock,
-            toBlock: "latest",
-          }
-        );
+        const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
+          filter: { user: blockchain.account, tokenId: tokenId },
+          fromBlock: fromBlock,
+          toBlock: "latest",
+        });
 
         if (events.length > 0) {
           const { amount } = events[0].returnValues;
-          setRewardMessage(
-            `YOU HAVE RECEIVED ${parseFloat(blockchain.web3.utils.fromWei(
-              amount,
-              "ether"
-            )).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $JOINT FROM $JOINT PACK #${tokenId}. THE $JOINT PACK IS NOW BURNT.`
-          );
+          setRewardMessage(`YOU HAVE RECEIVED ${parseFloat(blockchain.web3.utils.fromWei(amount, "ether")).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $JOINT FROM $JOINT PACK #${tokenId}. THE $JOINT PACK IS NOW BURNT.`);
           dispatch(fetchData());
           fetchTotalRewards(blockchain.account);
-        } else if (Date.now() - startTime < pollTimeout) {
-          setTimeout(poll, pollInterval);
-        } else {
-          setRewardMessage(
-            "Reward not received within the expected time. Please check your wallet later."
-          );
+          clearInterval(interval); // Stop polling once data is received
+        } else if (Date.now() - startTime >= pollTimeout) {
+          setRewardMessage("Reward not received within the expected time. Please check your wallet later.");
+          clearInterval(interval);
         }
       } catch (error) {
         console.error("Error polling for RewardClaimed event:", error);
-        setRewardMessage(
-          "An error occurred while fetching your reward. Please check your wallet later."
-        );
+        setRewardMessage("An error occurred while fetching your reward. Please check your wallet later.");
+        clearInterval(interval);
       }
-    };
-
-    poll();
+    }, pollInterval);
   };
 
   // Open LootBox
