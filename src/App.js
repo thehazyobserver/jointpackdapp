@@ -285,7 +285,8 @@ function App() {
     if (!blockchain.account) return;  // ✅ Avoid undefined errors
     fetchTotalRewards(blockchain.account);
     dispatch(fetchData());
-  }, [blockchain.account, blockchain.LootBoxNFT, dispatch]);
+  }, [blockchain.account, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
+  
 
   
   // Handle account and chain changes
