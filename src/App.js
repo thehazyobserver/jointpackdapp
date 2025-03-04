@@ -246,7 +246,7 @@ function App() {
   // Fetch total rewards received by the connected wallet
   const fetchTotalRewards = useRef(
     debounce(async (account) => {
-      if (!blockchain.LootBoxNFT || !account) {  // ✅ Prevent errors
+      if (!blockchain.LootBoxNFT || !account) {
         console.error("LootBoxNFT contract is not initialized or account is missing.");
         return;
       }
