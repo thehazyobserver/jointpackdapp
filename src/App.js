@@ -246,6 +246,11 @@ function App() {
   // Fetch total rewards received by the connected wallet
   const fetchTotalRewards = useCallback(
     async (account) => {
+      if (!blockchain.web3 || !blockchain.web3.utils) {
+        console.error("Web3 or Web3 utils is not initialized.");
+        return;
+      }
+  
       const debouncedFetch = debounce(async (account) => {
         if (!blockchain.LootBoxNFT || !account) {
           console.error("LootBoxNFT contract is not initialized or account is missing.");
@@ -271,9 +276,8 @@ function App() {
   
       debouncedFetch(account);
     },
-    [blockchain.LootBoxNFT, blockchain.web3.utils]
+    [blockchain.LootBoxNFT, blockchain.web3]
   );
-  
 
   // Initialize contract when account and web3 are available
   useEffect(() => {
