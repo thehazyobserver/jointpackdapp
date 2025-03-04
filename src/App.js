@@ -210,6 +210,7 @@ function App() {
     NFT_NAME: "",
     SYMBOL: "",
     SHOW_BACKGROUND: true,
+    GAS_LIMIT: 3000000, // Add GAS_LIMIT to CONFIG
   });
 
   // Fetch config.json data
