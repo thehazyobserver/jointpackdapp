@@ -303,6 +303,7 @@ useEffect(() => {
     };
   }
 }, [dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
+
   // Poll for RewardClaimed event
   const pollForRewardClaimed = async (tokenId, fromBlock) => {
     const pollInterval = 2000; // Poll every 2 seconds
