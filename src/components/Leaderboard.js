@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
+import debounce from 'lodash.debounce';
 
 const LeaderboardContainer = styled.div`
   width: 100%;
@@ -38,8 +39,9 @@ const LeaderboardItem = styled.li`
 const Leaderboard = () => {
   const blockchain = useSelector((state) => state.blockchain);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const fetchLeaderboardData = useCallback(async () => {
+  const fetchLeaderboardData = useCallback(debounce(async () => {
     if (!blockchain.LootBoxNFT) {
       console.error("LootBoxNFT contract is not initialized.");
       return;
@@ -70,11 +72,16 @@ const Leaderboard = () => {
 
       leaderboardData.sort((a, b) => b.total - a.total);
 
-      setLeaderboard(leaderboardData);
+      // Limit to top 50
+      const top50Leaderboard = leaderboardData.slice(0, 50);
+
+      setLeaderboard(top50Leaderboard);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching leaderboard data:", error);
+      setLoading(false);
     }
-  }, [blockchain.LootBoxNFT, blockchain.web3]);
+  }, 300), [blockchain.LootBoxNFT, blockchain.web3]);
 
   useEffect(() => {
     fetchLeaderboardData();
@@ -83,14 +90,18 @@ const Leaderboard = () => {
   return (
     <LeaderboardContainer>
       <LeaderboardTitle>Leaderboard</LeaderboardTitle>
-      <LeaderboardList>
-        {leaderboard.map((item, index) => (
-          <LeaderboardItem key={index}>
-            <span>{item.user}</span>
-            <span>{item.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $JOINT</span>
-          </LeaderboardItem>
-        ))}
-      </LeaderboardList>
+      {loading ? (
+        <p style={{ color: 'white', textAlign: 'center' }}>Loading...</p>
+      ) : (
+        <LeaderboardList>
+          {leaderboard.map((item, index) => (
+            <LeaderboardItem key={index}>
+              <span>{item.user}</span>
+              <span>{item.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $JOINT</span>
+            </LeaderboardItem>
+          ))}
+        </LeaderboardList>
+      )}
     </LeaderboardContainer>
   );
 };
