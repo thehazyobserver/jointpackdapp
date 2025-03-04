@@ -4,6 +4,7 @@ import { connect } from "./redux/blockchain/blockchainActions";
 import { initializeContract, fetchData } from "./redux/data/dataActions";
 import * as s from "./styles/globalStyles"; // if you have global styled stuff
 import styled from "styled-components";
+import Leaderboard from "./components/Leaderboard"; // Import the Leaderboard component
 // import { Screen } from "./styles/globalStyles";
 
 // Images
@@ -239,13 +240,37 @@ function App() {
     }
   };
 
+  // Fetch total rewards received by the connected wallet
+  const fetchTotalRewards = useCallback(async (account) => {
+    if (!blockchain.LootBoxNFT) {
+      console.error("LootBoxNFT contract is not initialized.");
+      return;
+    }
+
+    try {
+      const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
+        filter: { user: account },
+        fromBlock: 0,
+        toBlock: "latest",
+      });
+
+      const total = events.reduce((sum, event) => {
+        return sum + parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether"));
+      }, 0);
+
+      setTotalRewards(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    } catch (error) {
+      console.error("Error fetching total rewards:", error);
+    }
+  }, [blockchain.LootBoxNFT, blockchain.web3]);
+
   // Initialize contract when account and web3 are available
   useEffect(() => {
     if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS) {
       dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
       fetchTotalRewards(blockchain.account);
     }
-  }, [blockchain.account, blockchain.web3, dispatch, CONFIG.CONTRACT_ADDRESS]);
+  }, [blockchain.account, blockchain.web3, dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
 
   // Fetch data when contract is initialized
   useEffect(() => {
@@ -277,26 +302,7 @@ function App() {
         window.ethereum.removeListener("chainChanged", handleChainChanged);
       };
     }
-  }, [dispatch, CONFIG.CONTRACT_ADDRESS]);
-
-  // Fetch total rewards received by the connected wallet
-  const fetchTotalRewards = async (account) => {
-    try {
-      const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
-        filter: { user: account },
-        fromBlock: 0,
-        toBlock: "latest",
-      });
-
-      const total = events.reduce((sum, event) => {
-        return sum + parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether"));
-      }, 0);
-
-      setTotalRewards(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-    } catch (error) {
-      console.error("Error fetching total rewards:", error);
-    }
-  };
+  }, [dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
 
   // Poll for RewardClaimed event
   const pollForRewardClaimed = async (tokenId, fromBlock) => {
@@ -550,6 +556,7 @@ function App() {
             PLEASE CONNECT YOUR WALLET TO VIEW YOUR $JOINT PACKS.
           </s.TextDescription>
         )}
+        <Leaderboard /> {/* Add the Leaderboard component here */}
       </MainContent>
     </s.Screen>
   );
