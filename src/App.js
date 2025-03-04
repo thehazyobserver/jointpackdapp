@@ -243,44 +243,45 @@ function App() {
     dispatch(connect(CONFIG));
   };
 
-  // Fetch total rewards received by the connected wallet
-  const fetchTotalRewards = useCallback(
-    async (account) => {
-      if (!blockchain.web3 || !blockchain.web3.utils) {
-        console.error("Web3 or Web3 utils is not initialized.");
+// Fetch total rewards received by the connected wallet
+const fetchTotalRewards = useCallback(
+  async (account) => {
+    if (!blockchain.web3 || !blockchain.web3.utils) {
+      console.error("Web3 or Web3 utils is not initialized.");
+      return;
+    }
+
+    const debouncedFetch = debounce(async (account) => {
+      if (!blockchain.LootBoxNFT || !account) {
+        console.error("LootBoxNFT contract is not initialized or account is missing.");
         return;
       }
-  
-      const debouncedFetch = debounce(async (account) => {
-        if (!blockchain.LootBoxNFT || !account) {
-          console.error("LootBoxNFT contract is not initialized or account is missing.");
-          return;
-        }
-        try {
-          const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
-            filter: { user: account },
-            fromBlock: 0,
-            toBlock: "latest",
-          });
-  
-          const total = events.reduce(
-            (sum, event) => sum + parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether")),
-            0
-          );
-  
-          setTotalRewards(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-        } catch (error) {
-          console.error("Error fetching total rewards:", error);
-        }
-      }, 300); // Debounce with 300ms delay
-  
-      debouncedFetch(account);
-    },
-    [blockchain.LootBoxNFT, blockchain.web3.utils]
-  );
+      try {
+        const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
+          filter: { user: account },
+          fromBlock: 0,
+          toBlock: "latest",
+        });
+
+        const total = events.reduce(
+          (sum, event) => sum + parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether")),
+          0
+        );
+
+        setTotalRewards(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+      } catch (error) {
+        console.error("Error fetching total rewards:", error);
+      }
+    }, 300); // Debounce with 300ms delay
+
+    debouncedFetch(account);
+  },
+  [blockchain.LootBoxNFT, blockchain.web3.utils]
+);
+
 // Initialize contract when account and web3 are available
 useEffect(() => {
-  if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS && blockchain.LootBoxNFT) {
+  if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS) {
     try {
       dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
       fetchTotalRewards(blockchain.account);
@@ -288,7 +289,7 @@ useEffect(() => {
       console.error("Error initializing LootBoxNFT contract:", error);
     }
   }
-}, [blockchain.account, blockchain.web3, CONFIG.CONTRACT_ADDRESS, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
+}, [blockchain.account, blockchain.web3, CONFIG.CONTRACT_ADDRESS, dispatch, fetchTotalRewards]);
 
 // Fetch data when contract is initialized
 useEffect(() => {
@@ -302,9 +303,11 @@ useEffect(() => {
   if (window.ethereum) {
     const handleAccountsChanged = (accounts) => {
       dispatch({ type: "UPDATE_ACCOUNT", payload: { account: accounts[0] } });
-      dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
-      fetchTotalRewards(accounts[0]);
-      dispatch(fetchData());
+      if (CONFIG.CONTRACT_ADDRESS) {
+        dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
+        fetchTotalRewards(accounts[0]);
+        dispatch(fetchData());
+      }
     };
 
     const handleChainChanged = () => {
@@ -320,8 +323,6 @@ useEffect(() => {
     };
   }
 }, [dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
-  
-
   // Poll for RewardClaimed event
 const pollForRewardClaimed = async (tokenId, fromBlock) => {
   const pollInterval = 2000;
