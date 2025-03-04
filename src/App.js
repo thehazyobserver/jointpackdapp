@@ -284,9 +284,10 @@ function App() {
   // Fetch data when contract is initialized
   useEffect(() => {
     if (!blockchain.account) return;  // ✅ Avoid undefined errors
-    fetchTotalRewards(blockchain.account);
+    fetchTotalRewards.current(blockchain.account);
     dispatch(fetchData());
-  }, [blockchain.account, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
+
+}, [blockchain.account, blockchain.LootBoxNFT, dispatch, fetchTotalRewards.current]);
   
 
   
