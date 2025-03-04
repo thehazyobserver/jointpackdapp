@@ -240,70 +240,69 @@ function App() {
     }
   };
 
-  // Fetch total rewards received by the connected wallet
-  const fetchTotalRewards = useCallback(async (account) => {
-    if (!blockchain.LootBoxNFT) {
-      console.error("LootBoxNFT contract is not initialized.");
-      return;
-    }
+// Fetch total rewards received by the connected wallet
+const fetchTotalRewards = useCallback(async (account) => {
+  if (!blockchain.LootBoxNFT) {
+    console.error("LootBoxNFT contract is not initialized.");
+    return;
+  }
 
-    try {
-      const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
-        filter: { user: account },
-        fromBlock: 0,
-        toBlock: "latest",
-      });
+  try {
+    const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
+      filter: { user: account },
+      fromBlock: 0,
+      toBlock: "latest",
+    });
 
-      const total = events.reduce((sum, event) => {
-        return sum + parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether"));
-      }, 0);
+    const total = events.reduce((sum, event) => {
+      return sum + parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether"));
+    }, 0);
 
-      setTotalRewards(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-    } catch (error) {
-      console.error("Error fetching total rewards:", error);
-    }
-  }, [blockchain.LootBoxNFT, blockchain.web3]);
+    setTotalRewards(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+  } catch (error) {
+    console.error("Error fetching total rewards:", error);
+  }
+}, [blockchain.LootBoxNFT, blockchain.web3]);
 
-  // Initialize contract when account and web3 are available
-  useEffect(() => {
-    if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS) {
+// Initialize contract when account and web3 are available
+useEffect(() => {
+  if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS) {
+    dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
+    fetchTotalRewards(blockchain.account);
+  }
+}, [blockchain.account, blockchain.web3, dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
+
+// Fetch data when contract is initialized
+useEffect(() => {
+  if (blockchain.account && blockchain.LootBoxNFT) {
+    dispatch(fetchData());
+  }
+}, [blockchain.account, blockchain.LootBoxNFT, dispatch]);
+
+// Handle account and chain changes
+useEffect(() => {
+  if (window.ethereum) {
+    const handleAccountsChanged = (accounts) => {
+      dispatch({ type: "UPDATE_ACCOUNT", payload: { account: accounts[0] } });
       dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
-      fetchTotalRewards(blockchain.account);
-    }
-  }, [blockchain.account, blockchain.web3, dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
-
-  // Fetch data when contract is initialized
-  useEffect(() => {
-    if (blockchain.account && blockchain.LootBoxNFT) {
       dispatch(fetchData());
-    }
-  }, [blockchain.account, blockchain.LootBoxNFT, dispatch]);
+      fetchTotalRewards(accounts[0]);
+    };
 
-  // Handle account and chain changes
-  useEffect(() => {
-    if (window.ethereum) {
-      const handleAccountsChanged = (accounts) => {
-        dispatch({ type: "UPDATE_ACCOUNT", payload: { account: accounts[0] } });
-        dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
-        dispatch(fetchData());
-        fetchTotalRewards(accounts[0]);
-      };
+    const handleChainChanged = () => {
+      window.location.reload();
+    };
 
-      const handleChainChanged = () => {
-        window.location.reload();
-      };
+    window.ethereum.on("accountsChanged", handleAccountsChanged);
+    window.ethereum.on("chainChanged", handleChainChanged);
 
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
-      window.ethereum.on("chainChanged", handleChainChanged);
-
-      // Cleanup
-      return () => {
-        window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
-        window.ethereum.removeListener("chainChanged", handleChainChanged);
-      };
-    }
-  }, [dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
-
+    // Cleanup
+    return () => {
+      window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+      window.ethereum.removeListener("chainChanged", handleChainChanged);
+    };
+  }
+}, [dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
   // Poll for RewardClaimed event
   const pollForRewardClaimed = async (tokenId, fromBlock) => {
     const pollInterval = 2000; // Poll every 2 seconds
