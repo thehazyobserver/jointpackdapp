@@ -233,10 +233,6 @@ function App() {
     fetchConfig();
   }, []);  
   
-  useEffect(() => {
-    fetchConfig();
-  }, []);
-
   // Connect Wallet Handler
   const handleConnectWallet = () => {
     if (configLoaded) {
