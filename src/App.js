@@ -244,7 +244,7 @@ function App() {
   };
 
   // Fetch total rewards received by the connected wallet
-  const fetchTotalRewards = useRef(
+  const fetchTotalRewards = useCallback(
     debounce(async (account) => {
       if (!blockchain.LootBoxNFT || !account) {
         console.error("LootBoxNFT contract is not initialized or account is missing.");
@@ -266,8 +266,10 @@ function App() {
       } catch (error) {
         console.error("Error fetching total rewards:", error);
       }
-    }, 300)
-  ).current;  
+    }, 300), // Debounce with 300ms delay
+    [blockchain.LootBoxNFT] // ✅ Dependency array ensures function updates when contract changes
+  );
+  
 
   // Initialize contract when account and web3 are available
   useEffect(() => {
