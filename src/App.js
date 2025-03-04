@@ -276,53 +276,50 @@ function App() {
   
       debouncedFetch(account);
     },
-    [blockchain.LootBoxNFT, blockchain.web3]
+    [blockchain.LootBoxNFT, blockchain.web3.utils]
   );
-
-  // Initialize contract when account and web3 are available
-  useEffect(() => {
-    if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS && blockchain.LootBoxNFT) {
-      try {
-        dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
-        fetchTotalRewards(blockchain.account);
-      } catch (error) {
-        console.error("Error initializing LootBoxNFT contract:", error);
-      }
+// Initialize contract when account and web3 are available
+useEffect(() => {
+  if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS && blockchain.LootBoxNFT) {
+    try {
+      dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
+      fetchTotalRewards(blockchain.account);
+    } catch (error) {
+      console.error("Error initializing LootBoxNFT contract:", error);
     }
-  }, [blockchain.account, blockchain.web3, CONFIG.CONTRACT_ADDRESS, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
+  }
+}, [blockchain.account, blockchain.web3, CONFIG.CONTRACT_ADDRESS, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
 
-  // Fetch data when contract is initialized
-  useEffect(() => {
-    if (!blockchain.account) return;
-    fetchTotalRewards(blockchain.account);
-    dispatch(fetchData());
-  }, [blockchain.account, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
-  
+// Fetch data when contract is initialized
+useEffect(() => {
+  if (!blockchain.account || !blockchain.LootBoxNFT) return;
+  fetchTotalRewards(blockchain.account);
+  dispatch(fetchData());
+}, [blockchain.account, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
 
-    
-  // Handle account and chain changes// Handle account and chain changes
-  useEffect(() => {
-    if (window.ethereum) {
-      const handleAccountsChanged = (accounts) => {
-        dispatch({ type: "UPDATE_ACCOUNT", payload: { account: accounts[0] } });
-        dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
-        fetchTotalRewards(accounts[0]);
-        dispatch(fetchData());
-      };
-  
-      const handleChainChanged = () => {
-        window.location.reload();
-      };
-  
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
-      window.ethereum.on("chainChanged", handleChainChanged);
-  
-      return () => {
-        window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
-        window.ethereum.removeListener("chainChanged", handleChainChanged);
-      };
-    }
-  }, [dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
+// Handle account and chain changes
+useEffect(() => {
+  if (window.ethereum) {
+    const handleAccountsChanged = (accounts) => {
+      dispatch({ type: "UPDATE_ACCOUNT", payload: { account: accounts[0] } });
+      dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
+      fetchTotalRewards(accounts[0]);
+      dispatch(fetchData());
+    };
+
+    const handleChainChanged = () => {
+      window.location.reload();
+    };
+
+    window.ethereum.on("accountsChanged", handleAccountsChanged);
+    window.ethereum.on("chainChanged", handleChainChanged);
+
+    return () => {
+      window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+      window.ethereum.removeListener("chainChanged", handleChainChanged);
+    };
+  }
+}, [dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
   
 
   // Poll for RewardClaimed event
