@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import debounce from 'lodash.debounce';
+import debounce from "lodash.debounce";
 import { Link } from "react-router-dom";
 
 const LeaderboardContainer = styled.div`
@@ -56,52 +56,53 @@ const Leaderboard = () => {
   const blockchain = useSelector((state) => state.blockchain);
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
+  const debounceRef = useRef(null);
 
-  const fetchLeaderboardData = useCallback(debounce(async () => {
-    if (!blockchain.LootBoxNFT) {
+  useEffect(() => {
+    if (!blockchain.LootBoxNFT || !blockchain.web3) {
       console.error("LootBoxNFT contract is not initialized.");
       return;
     }
 
-    try {
-      const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
-        fromBlock: 0,
-        toBlock: "latest",
-      });
+    if (!debounceRef.current) {
+      debounceRef.current = debounce(async () => {
+        try {
+          const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
+            fromBlock: 0,
+            toBlock: "latest",
+          });
 
-      const rewards = events.reduce((acc, event) => {
-        const user = event.returnValues.user;
-        const amount = parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether"));
+          const rewards = events.reduce((acc, event) => {
+            const user = event.returnValues.user;
+            const amount = parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether"));
 
-        if (!acc[user]) {
-          acc[user] = 0;
+            if (!acc[user]) {
+              acc[user] = 0;
+            }
+            acc[user] += amount;
+
+            return acc;
+          }, {});
+
+          const leaderboardData = Object.keys(rewards).map((user) => ({
+            user,
+            total: rewards[user],
+          }));
+
+          leaderboardData.sort((a, b) => b.total - a.total);
+
+          // Limit to top 50
+          setLeaderboard(leaderboardData.slice(0, 50));
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching leaderboard data:", error);
+          setLoading(false);
         }
-        acc[user] += amount;
-
-        return acc;
-      }, {});
-
-      const leaderboardData = Object.keys(rewards).map((user) => ({
-        user,
-        total: rewards[user],
-      }));
-
-      leaderboardData.sort((a, b) => b.total - a.total);
-
-      // Limit to top 50
-      const top50Leaderboard = leaderboardData.slice(0, 50);
-
-      setLeaderboard(top50Leaderboard);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching leaderboard data:", error);
-      setLoading(false);
+      }, 300);
     }
-  }, 300), [blockchain.LootBoxNFT, blockchain.web3]);
 
-  useEffect(() => {
-    fetchLeaderboardData();
-  }, [fetchLeaderboardData]);
+    debounceRef.current();
+  }, [blockchain.LootBoxNFT, blockchain.web3]);
 
   return (
     <LeaderboardContainer>
@@ -110,7 +111,7 @@ const Leaderboard = () => {
         <StyledButton>Back to Main Page</StyledButton>
       </Link>
       {loading ? (
-        <p style={{ color: 'white', textAlign: 'center' }}>Loading...</p>
+        <p style={{ color: "white", textAlign: "center" }}>Loading...</p>
       ) : (
         <LeaderboardList>
           {leaderboard.map((item, index) => (
