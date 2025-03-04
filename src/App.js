@@ -283,9 +283,14 @@ function App() {
   // Fetch data when contract is initialized
   useEffect(() => {
     if (blockchain.account && blockchain.LootBoxNFT) {
-      dispatch(fetchData());
+      try {
+        fetchTotalRewards(blockchain.account);
+        dispatch(fetchData());
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
-  }, [blockchain.account, blockchain.LootBoxNFT, dispatch]);
+  }, [blockchain.account, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
 
   // Handle account and chain changes
   useEffect(() => {
@@ -293,8 +298,8 @@ function App() {
       const handleAccountsChanged = (accounts) => {
         dispatch({ type: "UPDATE_ACCOUNT", payload: { account: accounts[0] } });
         dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
-        dispatch(fetchData());
         fetchTotalRewards(accounts[0]);
+        dispatch(fetchData());
       };
 
       const handleChainChanged = () => {
