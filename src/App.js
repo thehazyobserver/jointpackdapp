@@ -320,7 +320,7 @@ function App() {
     const pollInterval = 2000; // 2 seconds
     const pollTimeout = 60000; // 1 minute
     const startTime = Date.now();
-
+  
     const interval = setInterval(async () => {
       try {
         const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
@@ -328,7 +328,7 @@ function App() {
           fromBlock: fromBlock,
           toBlock: "latest",
         });
-
+  
         if (events.length > 0) {
           const { amount } = events[0].returnValues;
           setRewardMessage(`YOU HAVE RECEIVED ${parseFloat(blockchain.web3.utils.fromWei(amount, "ether")).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $JOINT FROM $JOINT PACK #${tokenId}. THE $JOINT PACK IS NOW BURNT.`);
