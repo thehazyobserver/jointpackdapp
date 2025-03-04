@@ -276,7 +276,7 @@ const fetchTotalRewards = useCallback(
 
     debouncedFetch(account);
   },
-  [blockchain.LootBoxNFT, blockchain.web3, blockchain.web3.utils]
+  [blockchain.LootBoxNFT, blockchain.web3]
 );
 
 // Initialize contract when account and web3 are available
