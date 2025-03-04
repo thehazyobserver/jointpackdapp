@@ -213,21 +213,26 @@ function App() {
   });
 
   // Fetch config.json data
-  const getConfig = useCallback(async () => {
-    try {
-      const configResponse = await fetch("/config/config.json", {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-      const config = await configResponse.json();
-      SET_CONFIG(config);
-      setConfigLoaded(true);
-    } catch (error) {
-      console.error("Error fetching config:", error);
-    }
-  }, []);
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const configResponse = await fetch("/config/config.json", {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+        const config = await configResponse.json();
+        SET_CONFIG(config);
+        setConfigLoaded(true);
+      } catch (error) {
+        console.error("Error fetching config:", error);
+      }
+    };
+  
+    fetchConfig();
+  }, []);  
+  
 
   useEffect(() => {
     getConfig();
@@ -268,17 +273,16 @@ function App() {
 
   // Initialize contract when account and web3 are available
   useEffect(() => {
-    if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS) {
-      if (!blockchain.LootBoxNFT) {
-        try {
-          dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
-        } catch (error) {
-          console.error("Error initializing LootBoxNFT contract:", error);
-        }
+    if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS && blockchain.LootBoxNFT) {
+      try {
+        dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
+        fetchTotalRewards(blockchain.account);
+      } catch (error) {
+        console.error("Error initializing LootBoxNFT contract:", error);
       }
     }
-  }, [blockchain.account, blockchain.web3, CONFIG.CONTRACT_ADDRESS, dispatch]);
-
+  }, [blockchain.account, blockchain.web3, CONFIG.CONTRACT_ADDRESS, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
+  
   // Fetch data when contract is initialized
   useEffect(() => {
     if (blockchain.account && blockchain.LootBoxNFT) {
