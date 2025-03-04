@@ -506,7 +506,7 @@ function App() {
                           marginBottom: "20px",
                         }}
                       >
-                        TOTAL REWARDS RECEIVED: {totalRewards} $JOINT
+                        TOTAL $JOINT RECEIVED: {totalRewards} $JOINT
                       </s.TextDescription>
                       <MoreJointPacksButton
                         onClick={() =>
