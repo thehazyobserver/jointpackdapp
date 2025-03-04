@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import debounce from 'lodash.debounce';
+import { Link } from "react-router-dom";
 
 const LeaderboardContainer = styled.div`
   width: 100%;
@@ -33,6 +34,21 @@ const LeaderboardItem = styled.li`
 
   &:last-child {
     border-bottom: none;
+  }
+`;
+
+const StyledButton = styled.button`
+  display: block;
+  margin: 0 auto 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
   }
 `;
 
@@ -90,6 +106,9 @@ const Leaderboard = () => {
   return (
     <LeaderboardContainer>
       <LeaderboardTitle>Leaderboard</LeaderboardTitle>
+      <Link to="/">
+        <StyledButton>Back to Main Page</StyledButton>
+      </Link>
       {loading ? (
         <p style={{ color: 'white', textAlign: 'center' }}>Loading...</p>
       ) : (
