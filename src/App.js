@@ -6,6 +6,7 @@ import * as s from "./styles/globalStyles"; // if you have global styled stuff
 import styled from "styled-components";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import Leaderboard from "./components/Leaderboard"; // Import the Leaderboard component
+import debounce from 'lodash.debounce';
 // import { Screen } from "./styles/globalStyles";
 
 // Images
@@ -242,37 +243,39 @@ function App() {
   };
 
   // Fetch total rewards received by the connected wallet
-  const fetchTotalRewards = useCallback(async (account) => {
+  const fetchTotalRewards = useCallback(debounce(async (account) => {
     if (!blockchain.LootBoxNFT) {
       console.error("LootBoxNFT contract is not initialized.");
       return;
     }
-
+  
     try {
       const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
         filter: { user: account },
         fromBlock: 0,
         toBlock: "latest",
       });
-
+  
       const total = events.reduce((sum, event) => {
         return sum + parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether"));
       }, 0);
-
+  
       setTotalRewards(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     } catch (error) {
       console.error("Error fetching total rewards:", error);
     }
-  }, [blockchain.LootBoxNFT, blockchain.web3]);
+  }, 300), [blockchain.LootBoxNFT, blockchain.web3]);
 
   // Initialize contract when account and web3 are available
   useEffect(() => {
     if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS) {
-      try {
-        dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
-        fetchTotalRewards(blockchain.account);
-      } catch (error) {
-        console.error("Error initializing LootBoxNFT contract:", error);
+      if (!blockchain.LootBoxNFT) {
+        try {
+          dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
+          fetchTotalRewards(blockchain.account);
+        } catch (error) {
+          console.error("Error initializing LootBoxNFT contract:", error);
+        }
       }
     }
   }, [blockchain.account, blockchain.web3, CONFIG.CONTRACT_ADDRESS, dispatch, fetchTotalRewards]);
