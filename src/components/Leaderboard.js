@@ -124,7 +124,7 @@ const Leaderboard = () => {
   return (
     <LeaderboardContainer>
       <HeaderContainer>
-        <LeaderboardTitle>Leaderboard</LeaderboardTitle>
+        <LeaderboardTitle>TOP 100 $JOINT PACK STONERS</LeaderboardTitle>
         <Link to="/">
           <StyledButton>Open $JOINT PACKS</StyledButton>
         </Link>
