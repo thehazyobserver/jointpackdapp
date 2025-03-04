@@ -318,10 +318,10 @@ function App() {
         if (events.length > 0) {
           const { amount } = events[0].returnValues;
           setRewardMessage(
-            `YOU HAVE RECEIVED ${blockchain.web3.utils.fromWei(
+            `YOU HAVE RECEIVED ${parseFloat(blockchain.web3.utils.fromWei(
               amount,
               "ether"
-            )} $JOINT FROM $JOINT PACK #${tokenId}. THE $JOINT PACK IS NOW BURNT.`
+            )).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $JOINT FROM $JOINT PACK #${tokenId}. THE $JOINT PACK IS NOW BURNT.`
           );
           dispatch(fetchData());
           fetchTotalRewards(blockchain.account);
