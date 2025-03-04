@@ -268,8 +268,12 @@ function App() {
   // Initialize contract when account and web3 are available
   useEffect(() => {
     if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS) {
-      dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
-      fetchTotalRewards(blockchain.account);
+      try {
+        dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
+        fetchTotalRewards(blockchain.account);
+      } catch (error) {
+        console.error("Error initializing LootBoxNFT contract:", error);
+      }
     }
   }, [blockchain.account, blockchain.web3, dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
 
