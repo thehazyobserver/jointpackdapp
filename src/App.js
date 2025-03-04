@@ -234,10 +234,6 @@ function App() {
   }, []);  
   
 
-  useEffect(() => {
-    getConfig();
-  }, [getConfig]);
-
   // Connect Wallet Handler
   const handleConnectWallet = () => {
     if (configLoaded) {
