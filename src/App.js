@@ -424,8 +424,11 @@ function App() {
               <img src={passTheJointImage} alt="Pass the $JOINT" />
             </a>
             <Link to="/leaderboard">
-              <StyledButton>Leaderboard</StyledButton>
+              <StyledButton>LEADERBOARD</StyledButton>
             </Link>
+            <Link to="/">
+      <StyledButton>OPEN $JOINT PACKS</StyledButton>
+    </Link>
           </LinksContainer>
 
           <ConnectWalletButton onClick={handleConnectWallet} disabled={!configLoaded}>
