@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
 import { initializeContract, fetchData } from "./redux/data/dataActions";
@@ -243,28 +243,30 @@ function App() {
   };
 
   // Fetch total rewards received by the connected wallet
-  const fetchTotalRewards = useRef(debounce(async (account) => {
-    if (!blockchain.LootBoxNFT) {
-      console.error("LootBoxNFT contract is not initialized.");
-      return;
-    }
+  const fetchTotalRewards = useRef(
+    debounce(async (account) => {
+      if (!blockchain.LootBoxNFT || !account) {  // ✅ Prevent errors
+        console.error("LootBoxNFT contract is not initialized or account is missing.");
+        return;
+      }
+      try {
+        const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
+          filter: { user: account },
+          fromBlock: 0,
+          toBlock: "latest",
+        });
   
-    try {
-      const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
-        filter: { user: account },
-        fromBlock: 0,
-        toBlock: "latest",
-      });
+        const total = events.reduce(
+          (sum, event) => sum + parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether")),
+          0
+        );
   
-      const total = events.reduce((sum, event) => {
-        return sum + parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether"));
-      }, 0);
-  
-      setTotalRewards(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
-    } catch (error) {
-      console.error("Error fetching total rewards:", error);
-    }
-  }, 300)).current;
+        setTotalRewards(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+      } catch (error) {
+        console.error("Error fetching total rewards:", error);
+      }
+    }, 300)
+  ).current;  
 
   // Initialize contract when account and web3 are available
   useEffect(() => {
@@ -280,16 +282,12 @@ function App() {
 
   // Fetch data when contract is initialized
   useEffect(() => {
-    if (blockchain.account && blockchain.LootBoxNFT) {
-      try {
-        fetchTotalRewards(blockchain.account);
-        dispatch(fetchData());
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
-  }, [blockchain.account, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
+    if (!blockchain.account) return;  // ✅ Avoid undefined errors
+    fetchTotalRewards(blockchain.account);
+    dispatch(fetchData());
+  }, [blockchain.account, blockchain.LootBoxNFT, dispatch]);
 
+  
   // Handle account and chain changes
   useEffect(() => {
     if (window.ethereum) {
@@ -317,8 +315,8 @@ function App() {
 
   // Poll for RewardClaimed event
   const pollForRewardClaimed = async (tokenId, fromBlock) => {
-    const pollInterval = 2000; // 2 seconds
-    const pollTimeout = 60000; // 1 minute
+    const pollInterval = 2000;
+    const pollTimeout = 60000;
     const startTime = Date.now();
   
     const interval = setInterval(async () => {
@@ -331,21 +329,24 @@ function App() {
   
         if (events.length > 0) {
           const { amount } = events[0].returnValues;
-          setRewardMessage(`YOU HAVE RECEIVED ${parseFloat(blockchain.web3.utils.fromWei(amount, "ether")).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $JOINT FROM $JOINT PACK #${tokenId}. THE $JOINT PACK IS NOW BURNT.`);
+          setRewardMessage(
+            `YOU HAVE RECEIVED ${parseFloat(blockchain.web3.utils.fromWei(amount, "ether")).toLocaleString()} $JOINT FROM PACK #${tokenId}.`
+          );
           dispatch(fetchData());
           fetchTotalRewards(blockchain.account);
-          clearInterval(interval); // Stop polling once data is received
+          clearInterval(interval); // ✅ Stop polling
         } else if (Date.now() - startTime >= pollTimeout) {
-          setRewardMessage("Reward not received within the expected time. Please check your wallet later.");
-          clearInterval(interval);
+          setRewardMessage("Reward not received. Check later.");
+          clearInterval(interval); // ✅ Stop polling after timeout
         }
       } catch (error) {
         console.error("Error polling for RewardClaimed event:", error);
-        setRewardMessage("An error occurred while fetching your reward. Please check your wallet later.");
-        clearInterval(interval);
+        setRewardMessage("Error fetching reward. Check later.");
+        clearInterval(interval); // ✅ Stop polling if error occurs
       }
     }, pollInterval);
   };
+  
 
   // Open LootBox
   const openLootBox = async (tokenId) => {
