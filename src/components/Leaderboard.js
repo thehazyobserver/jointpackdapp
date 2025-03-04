@@ -27,7 +27,7 @@ const LeaderboardList = styled.ul`
 
 const LeaderboardItem = styled.li`
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   padding: 10px;
   border-bottom: 1px solid #ccc;
   color: white;
@@ -35,6 +35,22 @@ const LeaderboardItem = styled.li`
   &:last-child {
     border-bottom: none;
   }
+`;
+
+const RankSpan = styled.span`
+  margin-right: 10px;
+  font-weight: bold;
+  width: 30px;
+  text-align: right;
+`;
+
+const UserSpan = styled.span`
+  flex: 1;
+  margin: 0 10px;
+`;
+
+const TotalSpan = styled.span`
+  font-weight: bold;
 `;
 
 const StyledButton = styled.button`
@@ -74,13 +90,10 @@ const Leaderboard = () => {
 
           const rewards = events.reduce((acc, event) => {
             const user = event.returnValues.user;
-            const amount = parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether"));
-
-            if (!acc[user]) {
-              acc[user] = 0;
-            }
-            acc[user] += amount;
-
+            const amount = parseFloat(
+              blockchain.web3.utils.fromWei(event.returnValues.amount, "ether")
+            );
+            acc[user] = (acc[user] || 0) + amount;
             return acc;
           }, {});
 
@@ -115,9 +128,16 @@ const Leaderboard = () => {
       ) : (
         <LeaderboardList>
           {leaderboard.map((item, index) => (
-            <LeaderboardItem key={index}>
-              <span>{item.user}</span>
-              <span>{item.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} $JOINT</span>
+            <LeaderboardItem key={item.user}>
+              <RankSpan>#{index + 1}</RankSpan>
+              <UserSpan>{item.user}</UserSpan>
+              <TotalSpan>
+                {item.total.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}{" "}
+                $JOINT
+              </TotalSpan>
             </LeaderboardItem>
           ))}
         </LeaderboardList>
