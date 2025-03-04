@@ -14,10 +14,16 @@ const LeaderboardContainer = styled.div`
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 `;
 
-const LeaderboardTitle = styled.h2`
-  text-align: center;
-  color: white;
+const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+`;
+
+const LeaderboardTitle = styled.h2`
+  color: white;
+  margin: 0;
 `;
 
 const LeaderboardList = styled.ul`
@@ -54,8 +60,6 @@ const TotalSpan = styled.span`
 `;
 
 const StyledButton = styled.button`
-  display: block;
-  margin: 0 auto 20px;
   padding: 10px 20px;
   background-color: #007bff;
   color: white;
@@ -104,8 +108,8 @@ const Leaderboard = () => {
 
           leaderboardData.sort((a, b) => b.total - a.total);
 
-          // Limit to top 50
-          setLeaderboard(leaderboardData.slice(0, 50));
+          // Limit to top 100
+          setLeaderboard(leaderboardData.slice(0, 100));
           setLoading(false);
         } catch (error) {
           console.error("Error fetching leaderboard data:", error);
@@ -119,10 +123,12 @@ const Leaderboard = () => {
 
   return (
     <LeaderboardContainer>
-      <LeaderboardTitle>Leaderboard</LeaderboardTitle>
-      <Link to="/">
-        <StyledButton>Back to Main Page</StyledButton>
-      </Link>
+      <HeaderContainer>
+        <LeaderboardTitle>Leaderboard</LeaderboardTitle>
+        <Link to="/">
+          <StyledButton>Open $JOINT PACKS</StyledButton>
+        </Link>
+      </HeaderContainer>
       {loading ? (
         <p style={{ color: "white", textAlign: "center" }}>Loading...</p>
       ) : (
