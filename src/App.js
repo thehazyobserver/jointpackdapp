@@ -107,7 +107,7 @@ const MoreJointPacksButton = styled.button`
 // Main content container (pushed down by fixed header)
 const MainContent = styled.div`
   width: 100%;
-  padding-top: 40px; /* space for the fixed header's height */
+  padding-top: 60px; /* Adjusted space for the fixed header's height */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -194,6 +194,7 @@ function App() {
 
   const [selectedToken, setSelectedToken] = useState(null);
   const [rewardMessage, setRewardMessage] = useState("");
+  const [totalRewards, setTotalRewards] = useState("0");
   const [configLoaded, setConfigLoaded] = useState(false);
   const [CONFIG, SET_CONFIG] = useState({
     CONTRACT_ADDRESS: "",
@@ -242,6 +243,7 @@ function App() {
   useEffect(() => {
     if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS) {
       dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
+      fetchTotalRewards(blockchain.account);
     }
   }, [blockchain.account, blockchain.web3, dispatch, CONFIG.CONTRACT_ADDRESS]);
 
@@ -259,6 +261,7 @@ function App() {
         dispatch({ type: "UPDATE_ACCOUNT", payload: { account: accounts[0] } });
         dispatch(initializeContract(CONFIG.CONTRACT_ADDRESS));
         dispatch(fetchData());
+        fetchTotalRewards(accounts[0]);
       };
 
       const handleChainChanged = () => {
@@ -275,6 +278,25 @@ function App() {
       };
     }
   }, [dispatch, CONFIG.CONTRACT_ADDRESS]);
+
+  // Fetch total rewards received by the connected wallet
+  const fetchTotalRewards = async (account) => {
+    try {
+      const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
+        filter: { user: account },
+        fromBlock: 0,
+        toBlock: "latest",
+      });
+
+      const total = events.reduce((sum, event) => {
+        return sum + parseFloat(blockchain.web3.utils.fromWei(event.returnValues.amount, "ether"));
+      }, 0);
+
+      setTotalRewards(total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    } catch (error) {
+      console.error("Error fetching total rewards:", error);
+    }
+  };
 
   // Poll for RewardClaimed event
   const pollForRewardClaimed = async (tokenId, fromBlock) => {
@@ -302,6 +324,7 @@ function App() {
             )} $JOINT FROM $JOINT PACK #${tokenId}. THE $JOINT PACK IS NOW BURNT.`
           );
           dispatch(fetchData());
+          fetchTotalRewards(blockchain.account);
         } else if (Date.now() - startTime < pollTimeout) {
           setTimeout(poll, pollInterval);
         } else {
@@ -451,6 +474,18 @@ function App() {
             >
               PACKS CONTAIN ON AVERAGE 86,800 $JOINT
             </s.TextSubTitle>
+            <s.TextDescription
+              style={{
+                textAlign: "center",
+                fontSize: 18,
+                fontWeight: "bold",
+                color: "white",
+                marginTop: "0px",
+                marginBottom: "20px", // Added margin-bottom for spacing
+              }}
+            >
+              TOTAL REWARDS RECEIVED: {totalRewards} $JOINT
+            </s.TextDescription>
             <MoreJointPacksButton 
               onClick={() => window.open("https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings", "_blank")}
             >
@@ -471,25 +506,25 @@ function App() {
             )}
             {data.nfts && data.nfts.length > 0 ? (
               <NFTGrid>
-  {data.nfts.map(({ tokenId, image }) => (
-    <NFTBox key={tokenId}>
-      <NFTImage
-        src={image || defaultImage}
-        alt={`LootBox ${tokenId}`}
-        selected={selectedToken === tokenId}
-        onClick={() => setSelectedToken(tokenId)}
-      />
-      <NFTText>
-        {`$JOINT PACK #${tokenId}`}
-      </NFTText>
-      <NFTButtonContainer>
-        <StyledButton onClick={() => openLootBox(tokenId)}>
-          OPEN $JOINT PACK
-        </StyledButton>
-      </NFTButtonContainer>
-    </NFTBox>
-  ))}
-</NFTGrid>
+                {data.nfts.map(({ tokenId, image }) => (
+                  <NFTBox key={tokenId}>
+                    <NFTImage
+                      src={image || defaultImage}
+                      alt={`LootBox ${tokenId}`}
+                      selected={selectedToken === tokenId}
+                      onClick={() => setSelectedToken(tokenId)}
+                    />
+                    <NFTText>
+                      {`$JOINT PACK #${tokenId}`}
+                    </NFTText>
+                    <NFTButtonContainer>
+                      <StyledButton onClick={() => openLootBox(tokenId)}>
+                        OPEN $JOINT PACK
+                      </StyledButton>
+                    </NFTButtonContainer>
+                  </NFTBox>
+                ))}
+              </NFTGrid>
             ) : (
               <s.TextDescription
                 style={{
@@ -509,7 +544,7 @@ function App() {
               textAlign: "center",
               fontSize: 20,
               color: "white",
-              marginTop: "40px", // Added margin-top for spacing
+              marginTop: "60px", // Increased margin-top for spacing
             }}
           >
             PLEASE CONNECT YOUR WALLET TO VIEW YOUR $JOINT PACKS.
