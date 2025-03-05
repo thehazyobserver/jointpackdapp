@@ -220,20 +220,6 @@ const NFTButtonContainer = styled.div`
   }
 `;
 
-const LeaderboardContainer = styled.div`
-  width: 100%;
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 80px 20px 20px; /* Adjusted space for the fixed header's height */
-  background-color: #121212;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-
-  @media (max-width: 768px) {
-    padding: 100px 20px 20px; /* Increase padding for smaller screens */
-  }
-`;
-
 /* ------------------ Main App Component ------------------ */
 
 function App() {
