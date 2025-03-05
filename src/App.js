@@ -63,8 +63,13 @@ const LinksContainer = styled.div`
 
   @media (max-width: 768px) {
     width: 100%;
-    justify-content: space-around;
+    flex-direction: column; /* Stack links vertically */
+    align-items: center;
     margin-top: 10px;
+
+    a {
+      margin: 5px 0; /* Adjust margin for vertical alignment */
+    }
   }
 `;
 
@@ -96,6 +101,11 @@ const ConnectWalletButton = styled.button`
 
   :hover {
     background-color: #0059d7;
+  }
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+    margin-top: 10px; /* Add margin-top for spacing */
   }
 `;
 
