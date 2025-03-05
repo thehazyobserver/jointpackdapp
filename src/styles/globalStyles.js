@@ -6,10 +6,16 @@ export const Screen = styled.div`
   background-image: ${({ image }) => (image ? `url(${image})` : "none")};
   background-size: cover;
   background-position: center;
+  background-attachment: fixed; /* Ensure the background image is fixed */
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    background-size: cover; /* Adjust background size for mobile */
+    background-attachment: scroll; /* Allow background to scroll on mobile */
+  }
 `;
 
 // Used for providing space between components
