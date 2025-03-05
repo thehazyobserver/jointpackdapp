@@ -6,7 +6,8 @@ export const Screen = styled.div`
   background-image: ${({ image }) => (image ? `url(${image})` : "none")};
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* Ensure the background image is fixed */
+  background-repeat: no-repeat;
+  background-attachment: scroll; /* Ensure the background image is fixed */
   width: 100%;
   min-height: 100vh;
   display: flex;
