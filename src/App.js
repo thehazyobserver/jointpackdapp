@@ -429,12 +429,12 @@ function App() {
             <Link to="/">
               <StyledButton>OPEN $JOINT PACKS</StyledButton>
             </Link>
-            <Link to="https://paintswap.io/sonic/collections/joint-packs/listings">
+            <a href="https://paintswap.io/sonic/collections/joint-packs/listings" target="_blank" rel="noopener noreferrer">
               <StyledButton>GET MORE $JOINT PACKS</StyledButton>
-            </Link>
-            <Link to="https://stoner404.netlify.app/">
+            </a>
+            <a href="https://stoner404.netlify.app/" target="_blank" rel="noopener noreferrer">
               <StyledButton>$STONER</StyledButton>
-            </Link>
+            </a>
           </LinksContainer>
 
           <ConnectWalletButton onClick={handleConnectWallet} disabled={!configLoaded}>
