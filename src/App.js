@@ -427,8 +427,14 @@ function App() {
               <StyledButton>LEADERBOARD</StyledButton>
             </Link>
             <Link to="/">
-      <StyledButton>OPEN $JOINT PACKS</StyledButton>
-    </Link>
+              <StyledButton>OPEN $JOINT PACKS</StyledButton>
+            </Link>
+            <Link to="https://paintswap.io/sonic/collections/joint-packs/listings">
+              <StyledButton>GET MORE $JOINT PACKS</StyledButton>
+            </Link>
+            <Link to="https://stoner404.netlify.app/">
+              <StyledButton>$STONER</StyledButton>
+            </Link>
           </LinksContainer>
 
           <ConnectWalletButton onClick={handleConnectWallet} disabled={!configLoaded}>
