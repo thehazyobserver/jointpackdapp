@@ -35,11 +35,17 @@ const Header = styled.header`
   justify-content: space-between;
   padding: 10px 20px;
   z-index: 999; /* keep above other elements */
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const LinksContainer = styled.div`
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
 
   a {
     margin: 0 10px;
@@ -53,6 +59,12 @@ const LinksContainer = styled.div`
 
   img:hover {
     transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-around;
+    margin-top: 10px;
   }
 `;
 
@@ -113,6 +125,10 @@ const MainContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 768px) {
+    padding-top: 80px; /* Increase padding for smaller screens */
+  }
 `;
 
 /* -------- NFT Grid & Card Styles -------- */
@@ -125,6 +141,11 @@ const NFTGrid = styled.div`
   padding: 20px;
   max-width: 1200px;
   width: 100%;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+  }
 `;
 
 const NFTBox = styled.div`
@@ -147,6 +168,11 @@ const NFTBox = styled.div`
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
+
+  @media (max-width: 768px) {
+    width: 150px;
+    height: 200px;
+  }
 `;
 
 const NFTImage = styled.img`
@@ -154,6 +180,10 @@ const NFTImage = styled.img`
   max-height: 70%;
   object-fit: cover;
   border-radius: 4px;
+
+  @media (max-width: 768px) {
+    max-height: 60%;
+  }
 `;
 
 const NFTText = styled(s.TextDescription)`
@@ -162,6 +192,10 @@ const NFTText = styled(s.TextDescription)`
   width: 100%;
   margin-top: 10px;
   font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
 
 const NFTButtonContainer = styled.div`
@@ -170,6 +204,10 @@ const NFTButtonContainer = styled.div`
   align-items: center;
   width: 100%;
   margin-top: 5px;
+
+  @media (max-width: 768px) {
+    margin-top: 3px;
+  }
 `;
 
 /* ------------------ Main App Component ------------------ */
