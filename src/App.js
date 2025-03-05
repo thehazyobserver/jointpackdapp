@@ -121,13 +121,13 @@ const MoreJointPacksButton = styled.button`
 // Main content container (pushed down by fixed header)
 const MainContent = styled.div`
   width: 100%;
-  padding-top: 60px; /* Adjusted space for the fixed header's height */
+  padding-top: 80px; /* Adjusted space for the fixed header's height */
   display: flex;
   flex-direction: column;
   align-items: center;
 
   @media (max-width: 768px) {
-    padding-top: 80px; /* Increase padding for smaller screens */
+    padding-top: 100px; /* Increase padding for smaller screens */
   }
 `;
 
@@ -207,6 +207,20 @@ const NFTButtonContainer = styled.div`
 
   @media (max-width: 768px) {
     margin-top: 3px;
+  }
+`;
+
+const LeaderboardContainer = styled.div`
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 80px 20px 20px; /* Adjusted space for the fixed header's height */
+  background-color: #121212;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    padding: 100px 20px 20px; /* Increase padding for smaller screens */
   }
 `;
 
