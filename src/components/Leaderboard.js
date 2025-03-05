@@ -19,6 +19,12 @@ const LeaderboardTitle = styled.h2`
   margin-bottom: 20px;
 `;
 
+const LeaderboardSubtitle = styled.h3`
+  text-align: center;
+  color: #ccc;
+  margin-bottom: 20px;
+`;
+
 const LeaderboardList = styled.ul`
   list-style: none;
   padding: 0;
@@ -104,6 +110,8 @@ const Leaderboard = () => {
   return (
     <LeaderboardContainer>
       <LeaderboardTitle>TOP 100 $JOINT PACK STONERS</LeaderboardTitle>
+      <LeaderboardSubtitle>Top wallets that have received the most $JOINT from opening Packs.</LeaderboardSubtitle>
+      <LeaderboardSubtitle>Connect wallet to load Leaderboard.</LeaderboardSubtitle>
       {loading ? (
         <p style={{ color: "white", textAlign: "center" }}>Loading...</p>
       ) : (
