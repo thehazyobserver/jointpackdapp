@@ -143,11 +143,11 @@ const MainContent = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 10px;
-  padding: 0 20px;
+  margin-top: 20px;
+  padding: 0 10px;
 
   @media (max-width: 768px) {
-    margin-top: 50px; /* Increase margin for smaller screens if needed */
+    margin-top: 10px; /* Increase margin for smaller screens if needed */
   }
 `;
 
