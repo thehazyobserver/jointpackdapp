@@ -69,7 +69,7 @@ const StyledButton = styled.button`
   border: none;
   background-color:rgb(255, 255, 255);
   font-weight: bold;
-  color: white;
+  color: #0059d7;
   cursor: pointer;
   transition: background-color 0.3s ease;
 
