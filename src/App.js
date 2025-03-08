@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
 import { initializeContract, fetchData } from "./redux/data/dataActions";
 import * as s from "./styles/globalStyles"; // if you have global styled stuff
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import Leaderboard from "./components/Leaderboard"; // Import the Leaderboard component
+import Leaderboard from "./components/Leaderboard";
 import debounce from "lodash.debounce";
 
 // Images
@@ -14,15 +14,22 @@ import passTheJointImage from "./assets/images/PassTheJoint.gif";
 import paintswapImage from "./assets/images/paintswap.png";
 import telegramImage from "./assets/images/telegram.png";
 import twitterImage from "./assets/images/x.png";
-import bgImage from "./assets/images/bg.png"; // Adjust path if needed
+import bgImage from "./assets/images/bg.png";
 
 // Utility function
 const truncate = (input, len) =>
   input.length > len ? `${input.substring(0, len)}...` : input;
 
+// Global Style for consistent box sizing
+const GlobalStyle = createGlobalStyle`
+  * {
+    box-sizing: border-box;
+  }
+`;
+
 /* ------------------ Styled Components ------------------ */
 
-// Slim header with social icons + connect wallet
+// Header styles
 const Header = styled.header`
   position: relative;
   top: 0;
@@ -33,35 +40,33 @@ const Header = styled.header`
   z-index: 999;
 `;
 
-
-// New HeaderWrapper to center header content and restrict max-width
+// HeaderWrapper with consistent padding
 const HeaderWrapper = styled.div`
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
+  padding: 0 10px; /* same horizontal padding as the main content */
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
-// Social icons container (horizontal + responsive scaling)
+// Social icons container
 const SocialIcons = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-
   img {
     width: clamp(30px, 5vw, 40px);
     height: auto;
     transition: transform 0.3s ease;
   }
-
   img:hover {
     transform: scale(1.1);
   }
 `;
 
-// Main action buttons container below header
+// Main action buttons container
 const MainActions = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -71,6 +76,7 @@ const MainActions = styled.div`
   margin: 20px 0;
 `;
 
+// Styled button components
 const StyledButton = styled.button`
   padding: 10px;
   border-radius: 5px;
@@ -81,7 +87,6 @@ const StyledButton = styled.button`
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-size: 16px;
-
   &:hover {
     background-color: #21a1f1;
   }
@@ -97,7 +102,6 @@ const ConnectWalletButton = styled.button`
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-right: 20px;
-
   :hover {
     background-color: #007bff;
   }
@@ -118,26 +122,7 @@ const OpenJOINTPACKS = styled.button`
   }
 `;
 
-const MoreJointPacksButton = styled.button`
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  background-color: #ffffff;
-  font-weight: bold;
-  color: #0059d7;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 10px;
-  margin-right: 20px;
-  font-size: 16px;
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  }
-`;
-
-// Main content container with horizontal padding for better spacing
+// Main content container
 const MainContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -145,13 +130,20 @@ const MainContent = styled.div`
   width: 100%;
   margin-top: 20px;
   padding: 0 10px;
-
   @media (max-width: 768px) {
-    margin-top: 10px; /* Increase margin for smaller screens if needed */
+    margin-top: 10px;
   }
 `;
 
-/* -------- NFT Grid & Card Styles -------- */
+// New ContentWrapper to center main content and restrict max-width
+const ContentWrapper = styled.div`
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 10px;
+`;
+
+// NFT Grid & Card Styles
 const NFTGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -161,7 +153,6 @@ const NFTGrid = styled.div`
   padding: 20px;
   max-width: 1200px;
   width: 100%;
-
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 20px;
@@ -183,12 +174,10 @@ const NFTBox = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
-
   @media (max-width: 768px) {
     width: 150px;
     height: 200px;
@@ -200,7 +189,6 @@ const NFTImage = styled.img`
   max-height: 70%;
   object-fit: cover;
   border-radius: 4px;
-
   @media (max-width: 768px) {
     max-height: 60%;
   }
@@ -212,7 +200,6 @@ const NFTText = styled(s.TextDescription)`
   width: 100%;
   margin-top: 10px;
   font-weight: bold;
-
   @media (max-width: 768px) {
     font-size: 14px;
   }
@@ -224,7 +211,6 @@ const NFTButtonContainer = styled.div`
   align-items: center;
   width: 100%;
   margin-top: 5px;
-
   @media (max-width: 768px) {
     margin-top: 3px;
   }
@@ -255,7 +241,6 @@ function App() {
     GAS_LIMIT: 3000000,
   });
 
-  // Create and persist the debounced fetch function using useRef.
   const debouncedFetchRef = useRef(null);
 
   useEffect(() => {
@@ -267,7 +252,7 @@ function App() {
       try {
         const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
           filter: { user: account },
-          fromBlock: 0, 
+          fromBlock: 0,
           toBlock: "latest",
         });
         const total = events.reduce(
@@ -303,7 +288,6 @@ function App() {
     [blockchain.web3]
   );
 
-  // Fetch config.json data
   useEffect(() => {
     const fetchConfig = async () => {
       try {
@@ -324,7 +308,6 @@ function App() {
     fetchConfig();
   }, []);
 
-  // Connect Wallet Handler
   const handleConnectWallet = () => {
     if (!configLoaded || !CONFIG.CONTRACT_ADDRESS) {
       console.error("Config not loaded or missing contract address.");
@@ -333,7 +316,6 @@ function App() {
     dispatch(connect(CONFIG));
   };
 
-  // Initialize contract when account and web3 are available
   useEffect(() => {
     if (blockchain.account && blockchain.web3 && CONFIG.CONTRACT_ADDRESS) {
       try {
@@ -345,14 +327,12 @@ function App() {
     }
   }, [blockchain.account, blockchain.web3, CONFIG.CONTRACT_ADDRESS, dispatch, fetchTotalRewards]);
 
-  // Fetch data when contract is initialized
   useEffect(() => {
     if (!blockchain.account || !blockchain.LootBoxNFT) return;
     fetchTotalRewards(blockchain.account);
     dispatch(fetchData());
   }, [blockchain.account, blockchain.LootBoxNFT, dispatch, fetchTotalRewards]);
 
-  // Handle account and chain changes
   useEffect(() => {
     if (window.ethereum) {
       const handleAccountsChanged = (accounts) => {
@@ -378,7 +358,6 @@ function App() {
     }
   }, [dispatch, CONFIG.CONTRACT_ADDRESS, fetchTotalRewards]);
 
-  // Poll for RewardClaimed event
   const pollForRewardClaimed = async (tokenId, fromBlock) => {
     const pollInterval = 2000;
     const pollTimeout = 60000;
@@ -414,27 +393,22 @@ function App() {
     }, pollInterval);
   };
 
-  // Open LootBox
   const openLootBox = async (tokenId) => {
     try {
       setRewardMessage(`OPENING $JOINT PACK #${tokenId}...`);
-
       const tx = await blockchain.LootBoxNFT.methods
         .openLootBox(tokenId)
         .send({ from: blockchain.account, gas: CONFIG.GAS_LIMIT });
 
       console.log("Transaction Receipt:", tx);
-
       const transactionHash = tx.transactionHash;
       let fromBlock;
-
       if (tx.blockNumber) {
         fromBlock = tx.blockNumber;
       } else {
         const txReceipt = await blockchain.web3.eth.getTransactionReceipt(transactionHash);
         fromBlock = txReceipt.blockNumber;
       }
-
       setRewardMessage(`$JOINT PACK #${tokenId} OPENED SUCCESSFULLY. WAITING FOR REWARD....`);
       pollForRewardClaimed(tokenId, fromBlock);
     } catch (error) {
@@ -445,8 +419,8 @@ function App() {
 
   return (
     <Router>
+      <GlobalStyle />
       <s.Screen image={bgImage}>
-        {/* HEADER: Social Icons + Connect Wallet with HeaderWrapper */}
         <Header>
           <HeaderWrapper>
             <SocialIcons>
@@ -479,7 +453,6 @@ function App() {
                 <img src={passTheJointImage} alt="Pass the $JOINT" />
               </a>
             </SocialIcons>
-
             <ConnectWalletButton onClick={handleConnectWallet} disabled={!configLoaded}>
               {blockchain.account
                 ? `CONNECTED: ${truncate(blockchain.account, 15)}`
@@ -488,7 +461,6 @@ function App() {
           </HeaderWrapper>
         </Header>
 
-        {/* MAIN ACTION BUTTONS BELOW HEADER */}
         <MainActions>
           <Link to="/leaderboard">
             <StyledButton>LEADERBOARD</StyledButton>
@@ -505,147 +477,139 @@ function App() {
           </a>
         </MainActions>
   
-        {/* MAIN CONTENT */}
         <MainContent>
-          <Routes>
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route
-              path="/"
-              element={
-                <>
-                  {blockchain.errorMsg !== "" && (
-                    <s.TextDescription
-                      style={{
-                        textAlign: "center",
-                        fontSize: 20,
-                        color: "white",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      {blockchain.errorMsg}
-                    </s.TextDescription>
-                  )}
-
-                  {blockchain.account && blockchain.LootBoxNFT ? (
-                    <>
-                      <s.TextTitle
-                        style={{
-                          textAlign: "center",
-                          fontSize: 40,
-                          fontWeight: "bold",
-                          color: "white",
-                          marginBottom: "10px",
-                        }}
-                      >
-                        YOUR $JOINT PACKS
-                      </s.TextTitle>
-                      <s.TextSubTitle
-                        style={{
-                          textAlign: "center",
-                          fontSize: 18,
-                          fontWeight: "bold",
-                          color: "white",
-                          marginTop: "0px",
-                          marginBottom: "20px",
-                        }}
-                      >
-                        OPEN TO RECEIVE 20,000 TO 1 MILLION $JOINT
-                      </s.TextSubTitle>
-                      <s.TextSubTitle
-                        style={{
-                          textAlign: "center",
-                          fontSize: 18,
-                          fontWeight: "bold",
-                          color: "white",
-                          marginTop: "0px",
-                          marginBottom: "20px",
-                        }}
-                      >
-                        PACKS CONTAIN ON AVERAGE 86,800 $JOINT
-                      </s.TextSubTitle>
+          <ContentWrapper>
+            <Routes>
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route
+                path="/"
+                element={
+                  <>
+                    {blockchain.errorMsg !== "" && (
                       <s.TextDescription
                         style={{
                           textAlign: "center",
-                          fontSize: 18,
-                          fontWeight: "bold",
+                          fontSize: 20,
                           color: "white",
-                          marginTop: "0px",
                           marginBottom: "20px",
                         }}
                       >
-                        TOTAL $JOINT RECEIVED: {totalRewards} $JOINT
+                        {blockchain.errorMsg}
                       </s.TextDescription>
-                      <MoreJointPacksButton
-                        onClick={() =>
-                          window.open(
-                            "https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings",
-                            "_blank"
-                          )
-                        }
-                      >
-                        GET MORE $JOINT PACKS
-                      </MoreJointPacksButton>
-                      {rewardMessage && (
-                        <s.TextDescription
+                    )}
+
+                    {blockchain.account && blockchain.LootBoxNFT ? (
+                      <>
+                        <s.TextTitle
                           style={{
                             textAlign: "center",
-                            fontSize: 20,
+                            fontSize: 40,
                             fontWeight: "bold",
                             color: "white",
-                            marginTop: "20px",
+                            marginBottom: "10px",
                           }}
                         >
-                          {rewardMessage}
-                        </s.TextDescription>
-                      )}
-                      {data.nfts && data.nfts.length > 0 ? (
-                        <NFTGrid>
-                          {data.nfts.map(({ tokenId, image }) => (
-                            <NFTBox key={tokenId}>
-                              <NFTImage
-                                src={image || defaultImage}
-                                alt={`LootBox ${tokenId}`}
-                                selected={selectedToken === tokenId}
-                                onClick={() => setSelectedToken(tokenId)}
-                              />
-                              <NFTText>{`$JOINT PACK #${tokenId}`}</NFTText>
-                              <NFTButtonContainer>
-                                <OpenJOINTPACKS onClick={() => openLootBox(tokenId)}>
-                                  OPEN $JOINT PACK
-                                </OpenJOINTPACKS>
-                              </NFTButtonContainer>
-                            </NFTBox>
-                          ))}
-                        </NFTGrid>
-                      ) : (
+                          YOUR $JOINT PACKS
+                        </s.TextTitle>
+                        <s.TextSubTitle
+                          style={{
+                            textAlign: "center",
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "0px",
+                            marginBottom: "20px",
+                          }}
+                        >
+                          OPEN TO RECEIVE 20,000 TO 1 MILLION $JOINT
+                        </s.TextSubTitle>
+                        <s.TextSubTitle
+                          style={{
+                            textAlign: "center",
+                            fontSize: 18,
+                            fontWeight: "bold",
+                            color: "white",
+                            marginTop: "0px",
+                            marginBottom: "20px",
+                          }}
+                        >
+                          PACKS CONTAIN ON AVERAGE 86,800 $JOINT
+                        </s.TextSubTitle>
                         <s.TextDescription
                           style={{
                             textAlign: "center",
-                            fontSize: 20,
+                            fontSize: 18,
+                            fontWeight: "bold",
                             color: "white",
-                            marginTop: "20px",
+                            marginTop: "0px",
+                            marginBottom: "20px",
                           }}
                         >
-                          NO $JOINT PACKS FOUND. DON'T STOP THE PARTY! GET MORE $JOINT PACKS.
+                          TOTAL $JOINT RECEIVED: {totalRewards} $JOINT
                         </s.TextDescription>
-                      )}
-                    </>
-                  ) : (
-                    <s.TextDescription
-                      style={{
-                        textAlign: "center",
-                        fontSize: 20,
-                        color: "white",
-                        marginTop: "60px",
-                      }}
-                    >
-                      PLEASE CONNECT YOUR WALLET TO VIEW YOUR $JOINT PACKS.
-                    </s.TextDescription>
-                  )}
-                </>
-              }
-            />
-          </Routes>
+
+                        {rewardMessage && (
+                          <s.TextDescription
+                            style={{
+                              textAlign: "center",
+                              fontSize: 20,
+                              fontWeight: "bold",
+                              color: "white",
+                              marginTop: "20px",
+                            }}
+                          >
+                            {rewardMessage}
+                          </s.TextDescription>
+                        )}
+                        {data.nfts && data.nfts.length > 0 ? (
+                          <NFTGrid>
+                            {data.nfts.map(({ tokenId, image }) => (
+                              <NFTBox key={tokenId}>
+                                <NFTImage
+                                  src={image || defaultImage}
+                                  alt={`LootBox ${tokenId}`}
+                                  selected={selectedToken === tokenId}
+                                  onClick={() => setSelectedToken(tokenId)}
+                                />
+                                <NFTText>{`$JOINT PACK #${tokenId}`}</NFTText>
+                                <NFTButtonContainer>
+                                  <OpenJOINTPACKS onClick={() => openLootBox(tokenId)}>
+                                    OPEN $JOINT PACK
+                                  </OpenJOINTPACKS>
+                                </NFTButtonContainer>
+                              </NFTBox>
+                            ))}
+                          </NFTGrid>
+                        ) : (
+                          <s.TextDescription
+                            style={{
+                              textAlign: "center",
+                              fontSize: 20,
+                              color: "white",
+                              marginTop: "20px",
+                            }}
+                          >
+                            NO $JOINT PACKS FOUND. DON'T STOP THE PARTY! GET MORE $JOINT PACKS.
+                          </s.TextDescription>
+                        )}
+                      </>
+                    ) : (
+                      <s.TextDescription
+                        style={{
+                          textAlign: "center",
+                          fontSize: 20,
+                          color: "white",
+                          marginTop: "60px",
+                        }}
+                      >
+                        PLEASE CONNECT YOUR WALLET TO VIEW YOUR $JOINT PACKS.
+                      </s.TextDescription>
+                    )}
+                  </>
+                }
+              />
+            </Routes>
+          </ContentWrapper>
         </MainContent>
       </s.Screen>
     </Router>
