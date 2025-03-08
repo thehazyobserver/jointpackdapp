@@ -129,9 +129,6 @@ const MainContent = styled.div`
   width: 100%;
   margin-top: 20px;
   padding: 0 10px;
-  @media (max-width: 100%) {
-    margin-top: 10px;
-  }
 `;
 
 // New ContentWrapper to center main content and restrict max-width
@@ -146,7 +143,7 @@ const ContentWrapper = styled.div`
 const NFTGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 35px;
+  gap: 15px;
   justify-items: center;
   margin-bottom: 20px;
   padding: 20px;
