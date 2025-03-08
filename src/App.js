@@ -29,11 +29,18 @@ const Header = styled.header`
   left: 0;
   width: 100%;
   background-color: #121212;
+  padding: 10px 20px;
+  z-index: 999;
+`;
+
+// New HeaderWrapper to center header content and restrict max-width
+const HeaderWrapper = styled.div`
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
-  z-index: 999;
 `;
 
 // Social icons container (horizontal + responsive scaling)
@@ -67,7 +74,7 @@ const StyledButton = styled.button`
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color:rgb(255, 255, 255);
+  background-color: rgb(255, 255, 255);
   font-weight: bold;
   color: #0059d7;
   cursor: pointer;
@@ -114,13 +121,14 @@ const MoreJointPacksButton = styled.button`
   }
 `;
 
-// Main content container (pushed down by fixed header)
+// Main content container with horizontal padding for better spacing
 const MainContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   margin-top: 10px;
+  padding: 0 20px;
 
   @media (max-width: 768px) {
     margin-top: 50px; /* Increase margin for smaller screens if needed */
@@ -422,44 +430,46 @@ function App() {
   return (
     <Router>
       <s.Screen image={bgImage}>
-        {/* HEADER: Social Icons + Connect Wallet */}
+        {/* HEADER: Social Icons + Connect Wallet with HeaderWrapper */}
         <Header>
-          <SocialIcons>
-            <a
-              href="https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={paintswapImage} alt="PaintSwap" />
-            </a>
-            <a
-              href="https://x.com/PassThe_JOINT"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={twitterImage} alt="Twitter" />
-            </a>
-            <a
-              href="https://t.me/jointonsonic"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={telegramImage} alt="Telegram" />
-            </a>
-            <a
-              href="https://passthejoint.netlify.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img src={passTheJointImage} alt="Pass the $JOINT" />
-            </a>
-          </SocialIcons>
+          <HeaderWrapper>
+            <SocialIcons>
+              <a
+                href="https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src={paintswapImage} alt="PaintSwap" />
+              </a>
+              <a
+                href="https://x.com/PassThe_JOINT"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src={twitterImage} alt="Twitter" />
+              </a>
+              <a
+                href="https://t.me/jointonsonic"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src={telegramImage} alt="Telegram" />
+              </a>
+              <a
+                href="https://passthejoint.netlify.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <img src={passTheJointImage} alt="Pass the $JOINT" />
+              </a>
+            </SocialIcons>
 
-          <ConnectWalletButton onClick={handleConnectWallet} disabled={!configLoaded}>
-            {blockchain.account
-              ? `CONNECTED: ${truncate(blockchain.account, 15)}`
-              : "CONNECT WALLET"}
-          </ConnectWalletButton>
+            <ConnectWalletButton onClick={handleConnectWallet} disabled={!configLoaded}>
+              {blockchain.account
+                ? `CONNECTED: ${truncate(blockchain.account, 15)}`
+                : "CONNECT WALLET"}
+            </ConnectWalletButton>
+          </HeaderWrapper>
         </Header>
 
         {/* MAIN ACTION BUTTONS BELOW HEADER */}
