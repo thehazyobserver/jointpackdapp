@@ -7,7 +7,7 @@ const LeaderboardContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
+  width: 90%; /* Use percentage for responsiveness */
   max-width: 800px;
   margin: 20px auto;
   background-color: #121212;
@@ -16,7 +16,8 @@ const LeaderboardContainer = styled.div`
   padding: 20px;
 
   @media (max-width: 768px) {
-    padding: 20px;
+    width: 95%;
+    padding: 15px;
   }
 `;
 
@@ -28,27 +29,41 @@ const YourRankingContainer = styled.div`
   width: 100%;
   text-align: center;
   color: white;
+  font-size: 1rem;
+  word-break: break-all; /* Ensure long addresses wrap */
 `;
 
 const LeaderboardTitle = styled.h2`
   text-align: center;
   color: white;
   margin-bottom: 20px;
+  font-size: 1.8rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.6rem;
+  }
 `;
 
 const LeaderboardSubtitle = styled.h3`
   text-align: center;
   color: #ccc;
   margin-bottom: 20px;
+  font-size: 1.2rem;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 
 const LeaderboardList = styled.ul`
   list-style: none;
   padding: 0;
+  width: 100%;
 `;
 
 const LeaderboardItem = styled.li`
   display: flex;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
   align-items: center;
   padding: 10px;
   border-bottom: 1px solid #ccc;
@@ -70,6 +85,7 @@ const RankSpan = styled.span`
 const UserSpan = styled.span`
   flex: 1;
   margin: 0 10px;
+  word-break: break-all;
 `;
 
 const TotalSpan = styled.span`
@@ -125,7 +141,7 @@ const Leaderboard = () => {
     debounceRef.current();
   }, [blockchain.LootBoxNFT, blockchain.web3]);
 
-  // Find the connected user's ranking if available
+  // Compute user's ranking from the leaderboard data
   const userRank =
     blockchain.account && leaderboard.length > 0
       ? leaderboard.findIndex(
@@ -140,7 +156,9 @@ const Leaderboard = () => {
       <LeaderboardSubtitle>
         Top wallets that have received the most $JOINT from opening Packs.
       </LeaderboardSubtitle>
-      <LeaderboardSubtitle>Connect wallet to load Leaderboard.</LeaderboardSubtitle>
+      <LeaderboardSubtitle>
+        Connect wallet to load Leaderboard.
+      </LeaderboardSubtitle>
 
       {/* Display connected user's wallet and ranking */}
       {blockchain.account && (
