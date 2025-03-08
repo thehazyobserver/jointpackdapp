@@ -33,6 +33,7 @@ const Header = styled.header`
   z-index: 999;
 `;
 
+
 // New HeaderWrapper to center header content and restrict max-width
 const HeaderWrapper = styled.div`
   max-width: 1200px;
@@ -503,7 +504,7 @@ function App() {
             <StyledButton>GET MORE $JOINT PACKS</StyledButton>
           </a>
         </MainActions>
-
+  
         {/* MAIN CONTENT */}
         <MainContent>
           <Routes>
