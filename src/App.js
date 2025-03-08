@@ -67,7 +67,7 @@ const StyledButton = styled.button`
   padding: 10px;
   border-radius: 5px;
   border: none;
-  background-color: #0059d7;
+  background-color:rgb(255, 255, 255);
   font-weight: bold;
   color: white;
   cursor: pointer;
@@ -87,6 +87,7 @@ const ConnectWalletButton = styled.button`
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-right: 20px;
 
   :hover {
     background-color: #007bff;
