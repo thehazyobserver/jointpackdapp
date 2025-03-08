@@ -134,10 +134,10 @@ const MainContent = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 20px; /* Adjusted space for the fixed header's height */
+  margin-top: 10px; /* Adjusted space for the fixed header's height */
 
   @media (max-width: 768px) {
-    margin-top: 100px; /* Increase margin for smaller screens */
+    margin-top: 50px; /* Increase margin for smaller screens */
   }
 `;
 
