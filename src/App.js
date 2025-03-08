@@ -72,7 +72,7 @@ const MainActions = styled.div`
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin: 20px 0;
+  margin: 20px 0 10px 0; /* Reduce bottom margin */
 `;
 
 // Styled button components
@@ -127,7 +127,7 @@ const MainContent = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 10px; /* Reduce top margin */
   padding: 0 10px;
 `;
 
