@@ -102,6 +102,21 @@ const ConnectWalletButton = styled.button`
   }
 `;
 
+const OpenJOINTPACKS = styled.button`
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #0059d7;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  :hover {
+    background-color: #007bff;
+  }
+`;
+
 const MoreJointPacksButton = styled.button`
   padding: 10px;
   border-radius: 5px;
@@ -594,9 +609,9 @@ function App() {
                               />
                               <NFTText>{`$JOINT PACK #${tokenId}`}</NFTText>
                               <NFTButtonContainer>
-                                <StyledButton onClick={() => openLootBox(tokenId)}>
+                                <OpenJOINTPACKS onClick={() => openLootBox(tokenId)}>
                                   OPEN $JOINT PACK
-                                </StyledButton>
+                                </OpenJOINTPACKS>
                               </NFTButtonContainer>
                             </NFTBox>
                           ))}
