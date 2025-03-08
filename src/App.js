@@ -22,7 +22,7 @@ const truncate = (input, len) =>
 
 /* ------------------ Styled Components ------------------ */
 
-// Fixed (sticky) header
+// Slim header with social icons + connect wallet
 const Header = styled.header`
   position: relative;
   top: 0;
@@ -30,47 +30,37 @@ const Header = styled.header`
   width: 100%;
   background-color: #121212;
   display: flex;
-  flex-wrap: wrap; /* allow wrapping if needed */
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  z-index: 999; /* keep above other elements */
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  z-index: 999;
 `;
 
-const LinksContainer = styled.div`
+// Social icons container (horizontal + responsive scaling)
+const SocialIcons = styled.div`
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-
-  a {
-    margin: 0 10px;
-  }
+  gap: 10px;
 
   img {
-    width: 40px;
-    height: 40px;
+    width: clamp(30px, 5vw, 40px);
+    height: auto;
     transition: transform 0.3s ease;
   }
 
   img:hover {
     transform: scale(1.1);
   }
+`;
 
-  @media (max-width: 768px) {
-    width: 100%;
-    flex-direction: column; /* Stack links vertically */
-    align-items: center;
-    margin-top: 10px;
-
-    a {
-      margin: 5px 0; /* Adjust margin for vertical alignment */
-    }
-  }
+// Main action buttons container below header
+const MainActions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
 `;
 
 const StyledButton = styled.button`
@@ -97,15 +87,9 @@ const ConnectWalletButton = styled.button`
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-right: 20px;
 
   :hover {
-    background-color: #0059d7;
-  }
-
-  @media (max-width: 768px) {
-    margin-right: 0;
-    margin-top: 10px; /* Add margin-top for spacing */
+    background-color: #007bff;
   }
 `;
 
@@ -134,10 +118,10 @@ const MainContent = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 10px; /* Adjusted space for the fixed header's height */
+  margin-top: 10px;
 
   @media (max-width: 768px) {
-    margin-top: 50px; /* Increase margin for smaller screens */
+    margin-top: 50px; /* Increase margin for smaller screens if needed */
   }
 `;
 
@@ -257,7 +241,7 @@ function App() {
       try {
         const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
           filter: { user: account },
-          fromBlock: 0, // Optionally, adjust this range for optimization.
+          fromBlock: 0, 
           toBlock: "latest",
         });
         const total = events.reduce(
@@ -273,7 +257,6 @@ function App() {
       }
     }, 300);
 
-    // Cleanup: Cancel the debounced call on unmount or when dependencies change.
     return () => {
       if (debouncedFetchRef.current) {
         debouncedFetchRef.current.cancel();
@@ -281,7 +264,6 @@ function App() {
     };
   }, [blockchain.LootBoxNFT, blockchain.web3]);
 
-  // Fetch total rewards using the persisted debounced function.
   const fetchTotalRewards = useCallback(
     async (account) => {
       if (!blockchain.web3 || !blockchain.web3.utils) {
@@ -393,7 +375,7 @@ function App() {
           );
           dispatch(fetchData());
           fetchTotalRewards(blockchain.account);
-          clearInterval(interval); // Stop polling once reward is detected.
+          clearInterval(interval);
         } else if (Date.now() - startTime >= pollTimeout) {
           setRewardMessage("Reward not received. Check later.");
           clearInterval(interval);
@@ -428,8 +410,6 @@ function App() {
       }
 
       setRewardMessage(`$JOINT PACK #${tokenId} OPENED SUCCESSFULLY. WAITING FOR REWARD....`);
-
-      // Poll for RewardClaimed event
       pollForRewardClaimed(tokenId, fromBlock);
     } catch (error) {
       console.error("Error opening lootbox:", error);
@@ -440,9 +420,9 @@ function App() {
   return (
     <Router>
       <s.Screen image={bgImage}>
-        {/* HEADER */}
+        {/* HEADER: Social Icons + Connect Wallet */}
         <Header>
-          <LinksContainer>
+          <SocialIcons>
             <a
               href="https://paintswap.io/sonic/collections/0x9a303054c302b180772a96caded9858c7ab92e99/listings"
               target="_blank"
@@ -471,16 +451,7 @@ function App() {
             >
               <img src={passTheJointImage} alt="Pass the $JOINT" />
             </a>
-            <Link to="/leaderboard">
-              <StyledButton>LEADERBOARD</StyledButton>
-            </Link>
-            <Link to="/">
-              <StyledButton>OPEN $JOINT PACKS</StyledButton>
-            </Link>
-            <a href="https://paintswap.io/sonic/collections/joint-packs/listings" target="_blank" rel="noopener noreferrer">
-              <StyledButton>GET MORE $JOINT PACKS</StyledButton>
-            </a>
-          </LinksContainer>
+          </SocialIcons>
 
           <ConnectWalletButton onClick={handleConnectWallet} disabled={!configLoaded}>
             {blockchain.account
@@ -488,6 +459,23 @@ function App() {
               : "CONNECT WALLET"}
           </ConnectWalletButton>
         </Header>
+
+        {/* MAIN ACTION BUTTONS BELOW HEADER */}
+        <MainActions>
+          <Link to="/leaderboard">
+            <StyledButton>LEADERBOARD</StyledButton>
+          </Link>
+          <Link to="/">
+            <StyledButton>OPEN $JOINT PACKS</StyledButton>
+          </Link>
+          <a
+            href="https://paintswap.io/sonic/collections/joint-packs/listings"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <StyledButton>GET MORE $JOINT PACKS</StyledButton>
+          </a>
+        </MainActions>
 
         {/* MAIN CONTENT */}
         <MainContent>
