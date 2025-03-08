@@ -62,6 +62,7 @@ export const TextTitle = styled.p`
   font-size: 22px;
   font-weight: 500;
   line-height: 1.6;
+  margin: 0;
 `;
 
 export const TextSubTitle = styled.p`

@@ -2,9 +2,15 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { connect } from "./redux/blockchain/blockchainActions";
 import { initializeContract, fetchData } from "./redux/data/dataActions";
-import * as s from "./styles/globalStyles"; // if you have global styled stuff
+import * as s from "./styles/globalStyles"; // Global styled components
 import styled, { createGlobalStyle } from "styled-components";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Link,
+  useLocation,
+} from "react-router-dom";
 import Leaderboard from "./components/Leaderboard";
 import debounce from "lodash.debounce";
 
@@ -40,17 +46,15 @@ const Header = styled.header`
   z-index: 999;
 `;
 
-// HeaderWrapper with consistent padding
 const HeaderWrapper = styled.div`
   width: 100%;
   margin: 0 auto;
-  padding: 0 10px; /* same horizontal padding as the main content */
+  padding: 0 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `;
 
-// Social icons container
 const SocialIcons = styled.div`
   display: flex;
   align-items: center;
@@ -72,7 +76,7 @@ const MainActions = styled.div`
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin: 20px 0 10px 0; /* Reduce bottom margin */
+  margin: 20px 0 10px 0;
 `;
 
 // Styled button components
@@ -114,8 +118,8 @@ const OpenJOINTPACKS = styled.button`
   font-weight: bold;
   color: white;
   cursor: pointer;
+  margin-bottom: 20px;
   transition: background-color 0.3s ease;
-
   :hover {
     background-color: #007bff;
   }
@@ -127,11 +131,8 @@ const MainContent = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 10px; /* Reduce top margin */
-  padding: 0 10px;
 `;
 
-// New ContentWrapper to center main content and restrict max-width
 const ContentWrapper = styled.div`
   max-width: 100%;
   width: 100%;
@@ -142,8 +143,8 @@ const ContentWrapper = styled.div`
 const NFTGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  column-gap: 10px;  /* reduced horizontal gap */
-  row-gap: 35px;     /* vertical gap */
+  column-gap: 5px;
+  row-gap: 20px;
   justify-items: center;
   margin-bottom: 20px;
   padding: 20px;
@@ -158,7 +159,7 @@ const NFTGrid = styled.div`
 
 const NFTBox = styled.div`
   width: 220px;
-  min-height: 300px; /* allow box to grow if content overflows */
+  min-height: 300px;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -170,19 +171,15 @@ const NFTBox = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
-
   @media (max-width: 768px) {
     width: 150px;
     min-height: 200px;
   }
 `;
-
-
 
 const NFTImage = styled.img`
   width: 100%;
@@ -216,25 +213,38 @@ const NFTButtonContainer = styled.div`
   }
 `;
 
-/* ------------------ Main App Component ------------------ */
+// Stats container with a gradient background
+const StatsContainer = styled.div`
+  background: linear-gradient(135deg, #1c1c1c 0%, #2a2a2a 100%);
+  padding: 1px 40px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 600px;
+  margin: 30px auto;
+`;
 
-function App() {
+const HighlightText = styled.span`
+  color: #f1c40f;
+  font-weight: bold;
+`;
+
+/* ------------------ Inner App Component ------------------ */
+
+function InnerApp() {
   const dispatch = useDispatch();
   const blockchain = useSelector((state) => state.blockchain);
   const data = useSelector((state) => state.data);
+  const location = useLocation(); // Get the current route
 
   const [selectedToken, setSelectedToken] = useState(null);
   const [rewardMessage, setRewardMessage] = useState("");
   const [totalRewards, setTotalRewards] = useState("0");
+  const [userRanking, setUserRanking] = useState(null);
   const [configLoaded, setConfigLoaded] = useState(false);
   const [CONFIG, SET_CONFIG] = useState({
     CONTRACT_ADDRESS: "",
     SCAN_LINK: "",
-    NETWORK: {
-      NAME: "",
-      SYMBOL: "",
-      ID: 0,
-    },
+    NETWORK: { NAME: "", SYMBOL: "", ID: 0 },
     NFT_NAME: "",
     SYMBOL: "",
     SHOW_BACKGROUND: true,
@@ -243,6 +253,7 @@ function App() {
 
   const debouncedFetchRef = useRef(null);
 
+  // Compute total rewards for the connected user
   useEffect(() => {
     debouncedFetchRef.current = debounce(async (account) => {
       if (!blockchain.LootBoxNFT || !account) {
@@ -274,6 +285,40 @@ function App() {
       }
     };
   }, [blockchain.LootBoxNFT, blockchain.web3]);
+
+  // Compute user's ranking by fetching all RewardClaimed events
+  useEffect(() => {
+    async function computeRanking() {
+      if (!blockchain.LootBoxNFT || !blockchain.web3 || !blockchain.account) return;
+      try {
+        const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
+          fromBlock: 0,
+          toBlock: "latest",
+        });
+        const rewards = events.reduce((acc, event) => {
+          const user = event.returnValues.user;
+          const amount = parseFloat(
+            blockchain.web3.utils.fromWei(event.returnValues.amount, "ether")
+          );
+          acc[user] = (acc[user] || 0) + amount;
+          return acc;
+        }, {});
+        const leaderboardData = Object.keys(rewards).map((user) => ({
+          user,
+          total: rewards[user],
+        }));
+        leaderboardData.sort((a, b) => b.total - a.total);
+        const rank = leaderboardData.findIndex(
+          (item) =>
+            item.user.toLowerCase() === blockchain.account.toLowerCase()
+        );
+        setUserRanking(rank >= 0 ? rank + 1 : null);
+      } catch (error) {
+        console.error("Error computing user ranking:", error);
+      }
+    }
+    computeRanking();
+  }, [blockchain.LootBoxNFT, blockchain.web3, blockchain.account]);
 
   const fetchTotalRewards = useCallback(
     async (account) => {
@@ -366,8 +411,8 @@ function App() {
     const interval = setInterval(async () => {
       try {
         const events = await blockchain.LootBoxNFT.getPastEvents("RewardClaimed", {
-          filter: { user: blockchain.account, tokenId: tokenId },
-          fromBlock: fromBlock,
+          filter: { user: blockchain.account, tokenId },
+          fromBlock,
           toBlock: "latest",
         });
 
@@ -401,12 +446,11 @@ function App() {
         .send({ from: blockchain.account, gas: CONFIG.GAS_LIMIT });
 
       console.log("Transaction Receipt:", tx);
-      const transactionHash = tx.transactionHash;
       let fromBlock;
       if (tx.blockNumber) {
         fromBlock = tx.blockNumber;
       } else {
-        const txReceipt = await blockchain.web3.eth.getTransactionReceipt(transactionHash);
+        const txReceipt = await blockchain.web3.eth.getTransactionReceipt(tx.transactionHash);
         fromBlock = txReceipt.blockNumber;
       }
       setRewardMessage(`$JOINT PACK #${tokenId} OPENED SUCCESSFULLY. WAITING FOR REWARD....`);
@@ -418,7 +462,7 @@ function App() {
   };
 
   return (
-    <Router>
+    <>
       <GlobalStyle />
       <s.Screen image={bgImage}>
         <Header>
@@ -431,43 +475,35 @@ function App() {
               >
                 <img src={paintswapImage} alt="PaintSwap" />
               </a>
-              <a
-                href="https://x.com/PassThe_JOINT"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://x.com/PassThe_JOINT" target="_blank" rel="noopener noreferrer">
                 <img src={twitterImage} alt="Twitter" />
               </a>
-              <a
-                href="https://t.me/jointonsonic"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://t.me/jointonsonic" target="_blank" rel="noopener noreferrer">
                 <img src={telegramImage} alt="Telegram" />
               </a>
-              <a
-                href="https://passthejoint.netlify.app/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a href="https://passthejoint.netlify.app/" target="_blank" rel="noopener noreferrer">
                 <img src={passTheJointImage} alt="Pass the $JOINT" />
               </a>
             </SocialIcons>
             <ConnectWalletButton onClick={handleConnectWallet} disabled={!configLoaded}>
-              {blockchain.account
-                ? `CONNECTED: ${truncate(blockchain.account, 15)}`
-                : "CONNECT WALLET"}
+              {blockchain.account ? `CONNECTED: ${truncate(blockchain.account, 15)}` : "CONNECT WALLET"}
             </ConnectWalletButton>
           </HeaderWrapper>
         </Header>
 
         <MainActions>
-          <Link to="/leaderboard">
-            <StyledButton>LEADERBOARD</StyledButton>
-          </Link>
-          <Link to="/">
-            <StyledButton>OPEN $JOINT PACKS</StyledButton>
-          </Link>
+          {/* Conditionally render top buttons based on route */}
+          {location.pathname === "/" && (
+            <Link to="/leaderboard">
+              <StyledButton>LEADERBOARD</StyledButton>
+            </Link>
+          )}
+          {location.pathname === "/leaderboard" && (
+            <Link to="/">
+              <StyledButton>OPEN $JOINT PACKS</StyledButton>
+            </Link>
+          )}
+          {/* Always visible */}
           <a
             href="https://paintswap.io/sonic/collections/joint-packs/listings"
             target="_blank"
@@ -476,7 +512,7 @@ function App() {
             <StyledButton>GET MORE $JOINT PACKS</StyledButton>
           </a>
         </MainActions>
-  
+
         <MainContent>
           <ContentWrapper>
             <Routes>
@@ -497,56 +533,87 @@ function App() {
                         {blockchain.errorMsg}
                       </s.TextDescription>
                     )}
-
                     {blockchain.account && blockchain.LootBoxNFT ? (
                       <>
-                        <s.TextTitle
-                          style={{
-                            textAlign: "center",
-                            fontSize: 40,
-                            fontWeight: "bold",
-                            color: "white",
-                            marginBottom: "10px",
-                          }}
-                        >
-                          YOUR $JOINT PACKS
-                        </s.TextTitle>
-                        <s.TextSubTitle
-                          style={{
-                            textAlign: "center",
-                            fontSize: 18,
-                            fontWeight: "bold",
-                            color: "white",
-                            marginTop: "0px",
-                            marginBottom: "20px",
-                          }}
-                        >
-                          OPEN TO RECEIVE 20,000 TO 1 MILLION $JOINT
-                        </s.TextSubTitle>
-                        <s.TextSubTitle
-                          style={{
-                            textAlign: "center",
-                            fontSize: 18,
-                            fontWeight: "bold",
-                            color: "white",
-                            marginTop: "0px",
-                            marginBottom: "20px",
-                          }}
-                        >
-                          PACKS CONTAIN ON AVERAGE 86,800 $JOINT
-                        </s.TextSubTitle>
-                        <s.TextDescription
-                          style={{
-                            textAlign: "center",
-                            fontSize: 18,
-                            fontWeight: "bold",
-                            color: "white",
-                            marginTop: "0px",
-                            marginBottom: "20px",
-                          }}
-                        >
-                          TOTAL $JOINT RECEIVED: {totalRewards} $JOINT
-                        </s.TextDescription>
+                        {/* Stats Section with User Ranking */}
+             {/* Stats Section with User Ranking */}
+<StatsContainer>
+  <s.TextTitle
+    style={{
+      fontSize: "32px",
+      marginBottom: "0px",
+      color: "white",
+    }}
+  >
+    YOUR $JOINT PACKS
+  </s.TextTitle>
+  <s.TextSubTitle
+    style={{
+      fontSize: "20px",
+      marginBottom: "10px",
+      color: "white",
+    }}
+  >
+    OPEN TO RECEIVE 20,000 TO 1 MILLION $JOINT
+  </s.TextSubTitle>
+  <s.TextSubTitle
+    style={{
+      fontSize: "20px",
+      marginBottom: "10px",
+      color: "white",
+    }}
+  >
+    PACKS CONTAIN ON AVERAGE 86,800 $JOINT
+  </s.TextSubTitle>
+  <s.TextDescription
+    style={{
+      fontSize: "20px",
+      fontWeight: "bold",
+      marginBottom: "10px",
+      color: "white",
+    }}
+  >
+    TOTAL $JOINT RECEIVED: <HighlightText>{totalRewards} $JOINT</HighlightText>
+  </s.TextDescription>
+  {blockchain.account && (
+    <>
+      {userRanking !== null ? (
+        userRanking <= 100 ? (
+          <s.TextDescription
+            style={{
+              fontSize: "20px",
+              color: "white",
+              marginBottom: "20px",
+            }}
+          >
+            Your Leaderboard Ranking: <HighlightText>#{userRanking}</HighlightText>
+          </s.TextDescription>
+        ) : (
+          <s.TextDescription
+            style={{
+              fontSize: "20px",
+              color: "white",
+              marginBottom: "20px",
+            }}
+          >
+            Your Leaderboard Ranking: <HighlightText>#{userRanking}</HighlightText> (Not in Top 100)
+          </s.TextDescription>
+        )
+      ) : (
+        <s.TextDescription
+          style={{
+            fontSize: "20px",
+            color: "white",
+            marginBottom: "20px",
+          }}
+        >
+          Your wallet is not in the Top 100.
+        </s.TextDescription>
+      )}
+    </>
+  )}
+</StatsContainer>
+
 
                         {rewardMessage && (
                           <s.TextDescription
@@ -561,6 +628,7 @@ function App() {
                             {rewardMessage}
                           </s.TextDescription>
                         )}
+
                         {data.nfts && data.nfts.length > 0 ? (
                           <NFTGrid>
                             {data.nfts.map(({ tokenId, image }) => (
@@ -581,16 +649,24 @@ function App() {
                             ))}
                           </NFTGrid>
                         ) : (
-                          <s.TextDescription
-                            style={{
-                              textAlign: "center",
-                              fontSize: 20,
-                              color: "white",
-                              marginTop: "20px",
-                            }}
-                          >
-                            NO $JOINT PACKS FOUND. DON'T STOP THE PARTY! GET MORE $JOINT PACKS.
-                          </s.TextDescription>
+                          <StatsContainer>
+                            <s.TextDescription
+                              style={{
+                                fontSize: "20px",
+                                color: "white",
+                                marginBottom: "20px",
+                              }}
+                            >
+                              NO $JOINT PACKS FOUND. DON'T STOP THE PARTY!
+                            </s.TextDescription>
+                            <a
+                              href="https://paintswap.io/sonic/collections/joint-packs/listings"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <OpenJOINTPACKS>GET MORE $JOINT PACKS</OpenJOINTPACKS>
+                            </a>
+                          </StatsContainer>
                         )}
                       </>
                     ) : (
@@ -612,6 +688,15 @@ function App() {
           </ContentWrapper>
         </MainContent>
       </s.Screen>
+    </>
+  );
+}
+
+/* ------------------ Outer App Component ------------------ */
+function App() {
+  return (
+    <Router>
+      <InnerApp />
     </Router>
   );
 }

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { useSelector } from "react-redux";
 import debounce from "lodash.debounce";
 
-
 const LeaderboardContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -19,6 +18,16 @@ const LeaderboardContainer = styled.div`
   @media (max-width: 768px) {
     padding: 20px;
   }
+`;
+
+const YourRankingContainer = styled.div`
+  background-color: #222;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
+  color: white;
 `;
 
 const LeaderboardTitle = styled.h2`
@@ -44,6 +53,7 @@ const LeaderboardItem = styled.li`
   padding: 10px;
   border-bottom: 1px solid #ccc;
   color: white;
+  background-color: ${({ highlight }) => (highlight ? "#0059d7" : "transparent")};
 
   &:last-child {
     border-bottom: none;
@@ -115,17 +125,49 @@ const Leaderboard = () => {
     debounceRef.current();
   }, [blockchain.LootBoxNFT, blockchain.web3]);
 
+  // Find the connected user's ranking if available
+  const userRank =
+    blockchain.account && leaderboard.length > 0
+      ? leaderboard.findIndex(
+          (item) =>
+            item.user.toLowerCase() === blockchain.account.toLowerCase()
+        )
+      : -1;
+
   return (
     <LeaderboardContainer>
       <LeaderboardTitle>TOP 100 $JOINT PACK STONERS</LeaderboardTitle>
-      <LeaderboardSubtitle>Top wallets that have received the most $JOINT from opening Packs.</LeaderboardSubtitle>
+      <LeaderboardSubtitle>
+        Top wallets that have received the most $JOINT from opening Packs.
+      </LeaderboardSubtitle>
       <LeaderboardSubtitle>Connect wallet to load Leaderboard.</LeaderboardSubtitle>
+
+      {/* Display connected user's wallet and ranking */}
+      {blockchain.account && (
+        <YourRankingContainer>
+          <p>Your Wallet: {blockchain.account}</p>
+          {userRank > -1 ? (
+            <p>
+              Your Ranking: <strong>#{userRank + 1}</strong>
+            </p>
+          ) : (
+            <p>Your wallet is not in the Top 100.</p>
+          )}
+        </YourRankingContainer>
+      )}
+
       {loading ? (
         <p style={{ color: "white", textAlign: "center" }}>Loading...</p>
       ) : (
         <LeaderboardList>
           {leaderboard.map((item, index) => (
-            <LeaderboardItem key={item.user}>
+            <LeaderboardItem
+              key={item.user}
+              highlight={
+                blockchain.account &&
+                item.user.toLowerCase() === blockchain.account.toLowerCase()
+              }
+            >
               <RankSpan>#{index + 1}</RankSpan>
               <UserSpan>{item.user}</UserSpan>
               <TotalSpan>
