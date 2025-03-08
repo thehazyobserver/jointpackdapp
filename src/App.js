@@ -139,11 +139,11 @@ const ContentWrapper = styled.div`
   padding: 0 10px;
 `;
 
-// NFT Grid & Card Styles
 const NFTGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 15px;
+  column-gap: 10px;  /* reduced horizontal gap */
+  row-gap: 35px;     /* vertical gap */
   justify-items: center;
   margin-bottom: 20px;
   padding: 20px;
@@ -151,14 +151,14 @@ const NFTGrid = styled.div`
   width: 100%;
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px;
+    column-gap: 10px;
+    row-gap: 20px;
   }
 `;
 
 const NFTBox = styled.div`
   width: 220px;
-  height: 300px;
-  margin: 10px;
+  min-height: 300px; /* allow box to grow if content overflows */
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -170,15 +170,19 @@ const NFTBox = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
   }
+
   @media (max-width: 768px) {
     width: 150px;
-    height: 200px;
+    min-height: 200px;
   }
 `;
+
+
 
 const NFTImage = styled.img`
   width: 100%;
