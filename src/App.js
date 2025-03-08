@@ -42,7 +42,6 @@ const Header = styled.header`
 
 // HeaderWrapper with consistent padding
 const HeaderWrapper = styled.div`
-  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
   padding: 0 10px; /* same horizontal padding as the main content */
@@ -130,14 +129,14 @@ const MainContent = styled.div`
   width: 100%;
   margin-top: 20px;
   padding: 0 10px;
-  @media (max-width: 768px) {
+  @media (max-width: 100%) {
     margin-top: 10px;
   }
 `;
 
 // New ContentWrapper to center main content and restrict max-width
 const ContentWrapper = styled.div`
-  max-width: 1200px;
+  max-width: 100%;
   width: 100%;
   margin: 0 auto;
   padding: 0 10px;
@@ -151,7 +150,7 @@ const NFTGrid = styled.div`
   justify-items: center;
   margin-bottom: 20px;
   padding: 20px;
-  max-width: 1200px;
+  max-width: 100%;
   width: 100%;
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
