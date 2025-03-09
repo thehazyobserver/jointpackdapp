@@ -614,7 +614,6 @@ function InnerApp() {
   )}
 </StatsContainer>
 
-
                         {rewardMessage && (
                           <s.TextDescription
                             style={{
